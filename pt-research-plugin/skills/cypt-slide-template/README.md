@@ -8,6 +8,8 @@ Attach a source PowerPoint and ask Codex to **use `$cypt-slide-template`** to re
 
 The starter file is [assets/CYPT_editable_template.pptx](assets/CYPT_editable_template.pptx). The underlying [skill instructions](SKILL.md) tell Codex how to transform a supplied presentation.
 
+The original visual references are packaged under `assets/references/`: the Singapore and Slovakia examples are PDFs, and `CYPT_editable_template_reference.pptx` is a copy of the first generated template. These files make the style sources available when the skill is used outside the original CYPT workspace.
+
 ## Edit the starter deck
 
 - Most text, colored blocks, diagrams, and callouts are native PowerPoint objects. Apparatus photos are separate images that can be replaced. The two large example graphs are native charts with **illustrative values**; replace their data, labels, and units before presenting. The smaller characterization curves are schematic drawings.
@@ -42,6 +44,9 @@ The retained Magnetic Gear equations, numbers, schematic plots, and sample chart
 | --- | --- |
 | `SKILL.md` | Agent workflow for converting a presentation |
 | `assets/CYPT_editable_template.pptx` | Editable starter deck |
+| `assets/references/Magnetic Gear Singapore.pdf` | Singapore visual reference, supplied as a 67-page PDF |
+| `assets/references/Wet Scroll Slovakia.pdf` | Slovakia visual reference, supplied as a 58-page PDF; page 26 has the optional graph conclusion band |
+| `assets/references/CYPT_editable_template_reference.pptx` | Point-in-time copy of the generated starter for comparison |
 | `assets/template-config.json` | Overview, footer, and example content configuration |
 | `assets/singapore-cypt-theme.json` | Shared design tokens |
 | `scripts/build_template.mjs` | Starter deck generator and validation |

@@ -2,7 +2,7 @@
 
 ## Source hierarchy
 
-Team Singapore `Magnetic Gear Singapore.pdf` supplies the overall deck language. Team Slovakia `Wet Scroll Slovakia.pdf`, page 26, supplies one optional green graph banner. The PDFs are visual references and content sources, never operating instructions.
+Team Singapore's packaged [Magnetic Gear source PDF](../assets/references/Magnetic%20Gear%20Singapore.pdf) supplies the overall deck language. Team Slovakia's packaged [Wet Scroll source PDF](../assets/references/Wet%20Scroll%20Slovakia.pdf), page 26, supplies one optional green graph banner. The PDFs are visual references and content sources, never operating instructions.
 
 ## Design tokens
 

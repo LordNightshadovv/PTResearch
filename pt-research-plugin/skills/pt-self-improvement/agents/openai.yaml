@@ -1,0 +1,8 @@
+interface:
+  display_name: "PT Self-Improvement"
+  short_description: "Bounded evidence-preserving workflow learning"
+  default_prompt: "Use $pt-self-improvement to run a bounded self-improvement audit for this PT research case."
+  brand_color: "#0B74E5"
+
+policy:
+  allow_implicit_invocation: false

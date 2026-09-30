@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pt-research.local/schemas/solver-requirements.schema.json",
+  "title": "PT physics-derived solver requirements",
+  "type": "object",
+  "required": ["model_closure_status", "fields_and_degrees_of_freedom", "geometry_and_moving_interfaces", "constitutive_laws", "multiphysics_coupling", "expected_regimes", "required_outputs", "numerical_challenges", "verification_benchmarks", "simpler_tools_insufficient_because"],
+  "properties": {
+    "model_closure_status": {"type": "string", "enum": ["closed", "blocked", "unresolved"]},
+    "fields_and_degrees_of_freedom": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "geometry_and_moving_interfaces": {"type": "array", "items": {"type": "string"}},
+    "constitutive_laws": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "multiphysics_coupling": {"type": "array", "items": {"type": "string"}},
+    "expected_regimes": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "required_outputs": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "numerical_challenges": {"type": "array", "items": {"type": "string"}},
+    "verification_benchmarks": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "simpler_tools_insufficient_because": {"type": "string", "minLength": 1},
+    "dimensionless_analysis": {
+      "type": "object",
+      "required": ["applicability", "groups", "regime_identification", "not_applicable_justification"],
+      "properties": {
+        "applicability": {"type": "string", "enum": ["applicable", "not_applicable"]},
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "definition", "physical_meaning", "value_or_range", "regime_implication", "parameter_sources"],
+            "properties": {
+              "name": {"type": "string", "minLength": 1},
+              "definition": {"type": "string", "minLength": 1},
+              "physical_meaning": {"type": "string", "minLength": 1},
+              "value_or_range": {"type": "string", "minLength": 1},
+              "regime_implication": {"type": "string", "minLength": 1},
+              "parameter_sources": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+            }
+          }
+        },
+        "regime_identification": {"type": "string", "minLength": 1},
+        "not_applicable_justification": {"type": "string"}
+      }
+    }
+  },
+  "additionalProperties": true
+}

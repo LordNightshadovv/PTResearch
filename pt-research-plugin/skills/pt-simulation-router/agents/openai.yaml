@@ -1,0 +1,6 @@
+interface:
+  display_name: "PT Simulation Router"
+  short_description: "Choose a solver route from governing physics"
+  default_prompt: "Use $pt-simulation-router to route this orchestrator-approved PT model to a justified numerical method."
+policy:
+  allow_implicit_invocation: false

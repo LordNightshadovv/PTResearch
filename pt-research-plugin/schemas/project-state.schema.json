@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pt-research.local/schemas/project-state.schema.json",
+  "title": "PT project state",
+  "type": "object",
+  "required": ["case_id", "exact_prompt", "stage", "claims"],
+  "properties": {
+    "case_id": {"type": "string", "minLength": 1},
+    "exact_prompt": {"type": "string", "minLength": 1},
+    "stage": {"type": "string", "minLength": 1},
+    "claims": {"type": "array", "items": {"type": "object", "required": ["stage", "status"], "properties": {"stage": {"type": "string"}, "status": {"type": "string"}, "requires_dependency": {"type": "string"}, "evidence_ids": {"type": "array", "items": {"type": "string"}}}}},
+    "contract_version": {"type": "integer"},
+    "simulation_contract_version": {"type": "integer", "const": 1},
+    "scientific_readiness": {"type": "string", "enum": ["scientific_stop", "model_selected_not_closed", "model_closed"]},
+    "software_readiness": {"type": "string", "enum": ["not_applicable", "handoff_only", "implementation_ready", "runnable_synthetic", "runnable_apparatus", "executed_unverified", "numerically_verified", "experimentally_compared"]},
+    "claim_ceiling": {"type": "string"}
+  },
+  "additionalProperties": true
+}

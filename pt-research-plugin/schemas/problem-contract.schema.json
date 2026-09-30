@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pt-research.local/schemas/problem-contract.schema.json",
+  "title": "PT problem contract",
+  "type": "object",
+  "required": ["case_id", "exact_prompt", "primary_observables", "constraints", "apparatus_branches"],
+  "properties": {
+    "case_id": {"type": "string", "minLength": 1},
+    "exact_prompt": {"type": "string", "minLength": 1},
+    "primary_observables": {"type": "array", "items": {"type": "string"}},
+    "constraints": {"type": "array", "items": {"type": "string"}},
+    "apparatus_branches": {"type": "array", "items": {"type": "string"}},
+    "controlled_inputs": {"type": "array", "items": {"type": "string"}},
+    "experimental_parameter_ranges": {"type": "array", "items": {"type": "object"}},
+    "contract_version": {"type": "integer"}
+  },
+  "additionalProperties": true
+}

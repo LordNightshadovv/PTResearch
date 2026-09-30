@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pt-research.local/schemas/case-manifest.schema.json",
+  "title": "OpenFOAM case manifest",
+  "type": "object",
+  "required": ["selected_model_id", "distribution", "version", "status", "assumptions", "baseline_accepted", "parameter_sweep_started"],
+  "properties": {
+    "selected_model_id": {"type": "string"}, "distribution": {"type": "string"}, "version": {"type": "string"},
+    "status": {"type": "string", "enum": ["specified", "case_generated", "mesh_valid", "solver_completed", "numerically_converged", "conservation_passed", "mesh_independent", "timestep_independent", "physically_plausible", "validated_against_reference", "accepted_for_scientific_use"]},
+    "assumptions": {"type": "array", "items": {"type": "string"}},
+    "baseline_accepted": {"type": "boolean"}, "parameter_sweep_started": {"type": "boolean"}
+  },
+  "additionalProperties": true
+}

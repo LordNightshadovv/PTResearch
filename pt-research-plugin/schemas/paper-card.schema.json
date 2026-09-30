@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pt-research.local/schemas/paper-card.schema.json",
+  "title": "PT paper card",
+  "type": "object",
+  "required": ["paper_id", "access_level", "claims", "models", "limitations"],
+  "properties": {
+    "paper_id": {"type": "string"}, "access_level": {"type": "string"},
+    "claims": {"type": "array"}, "models": {"type": "array"}, "limitations": {"type": "array"}
+  },
+  "additionalProperties": true
+}

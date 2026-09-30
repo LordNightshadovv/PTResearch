@@ -1,0 +1,6 @@
+interface:
+  display_name: "Upstream CFD Mesh Gate"
+  short_description: "Validate mesh and time-step sensitivity"
+  default_prompt: "Use $upstream-cfd-mesh-gate on this accepted PT baseline case."
+policy:
+  allow_implicit_invocation: false

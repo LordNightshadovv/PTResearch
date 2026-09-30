@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pt-research.local/schemas/dependency-report.schema.json",
+  "title": "PT dependency report",
+  "type": "object",
+  "required": ["mode", "dependencies", "limitations"],
+  "properties": {
+    "mode": {"type": "string", "enum": ["operational", "reduced_capability", "not_checked"]},
+    "dependencies": {"type": "array", "items": {"type": "object", "required": ["name", "available"], "properties": {"name": {"type": "string"}, "available": {"type": "boolean"}, "detail": {"type": "string"}}}},
+    "limitations": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

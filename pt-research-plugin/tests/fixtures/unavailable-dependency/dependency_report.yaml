@@ -1,0 +1,1 @@
+{"mode":"reduced_capability","dependencies":[{"name":"OpenFOAM","available":false,"detail":"executable not found"},{"name":"Foam-Agent","available":false,"detail":"Python packages absent"}],"limitations":["No dictionary generation, case execution, convergence, or scientific acceptance is claimed."]}

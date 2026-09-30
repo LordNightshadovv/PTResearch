@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pt-research.local/schemas/simulation-parameters.schema.json",
+  "title": "PT separated simulation inputs",
+  "type": "object",
+  "required": ["controls", "material_properties", "geometry", "initial_conditions", "boundary_conditions", "calibration_parameters", "derived_quantities", "state_variables", "observables", "uncertainties"],
+  "properties": {
+    "controls": {"type": "object"},
+    "material_properties": {"type": "object"},
+    "geometry": {"type": "object"},
+    "initial_conditions": {"type": "object"},
+    "boundary_conditions": {"type": "object"},
+    "calibration_parameters": {"type": "object"},
+    "derived_quantities": {"type": "object"},
+    "state_variables": {"type": "object"},
+    "observables": {"type": "object"},
+    "uncertainties": {"type": "object"},
+    "metadata": {"type": "object"}
+  },
+  "additionalProperties": false
+}

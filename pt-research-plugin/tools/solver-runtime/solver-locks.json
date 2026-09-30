@@ -1,0 +1,77 @@
+{
+  "lock_format": 1,
+  "policy": {
+    "binaries_bundled_by_default": false,
+    "official_source_only": true,
+    "installation_requires_explicit_authorization": true,
+    "package_requires_platform_test_receipt": true
+  },
+  "solvers": {
+    "OpenFOAM": {
+      "version": "14",
+      "executable": "simpleFoam",
+      "probe_command": ["simpleFoam", "-help"],
+      "official_source": "https://openfoam.org/download/",
+      "official_repository": "https://dl.openfoam.org/ubuntu",
+      "license": "GPL-3.0-or-later",
+      "targets": ["ubuntu-x86_64-cpu", "ubuntu-arm64-cpu", "macos-apple-silicon-cpu-container", "macos-intel-cpu-container"],
+      "smoke_test": "OpenFOAM tutorial selected from the installed v14 tutorials; retain blockMesh, checkMesh, solver, and post-processing logs.",
+      "template": "openfoam-cavity"
+    },
+    "HCIPy": {
+      "version": "0.7.0",
+      "executable": "python -c 'import hcipy; print(hcipy.__version__)'",
+      "probe_command": ["python3", "-c", "import hcipy; print(hcipy.__version__)"],
+      "official_source": "https://hcipy.readthedocs.io/",
+      "official_repository": "https://github.com/ehpor/hcipy",
+      "license": "BSD-3-Clause",
+      "targets": ["ubuntu-x86_64-cpu", "ubuntu-arm64-cpu", "macos-apple-silicon-cpu", "macos-intel-cpu"],
+      "smoke_test": "Run the bundled aperture-diffraction validation and compare its radial profile with the analytic Airy reference.",
+      "template": "hcipy-aperture-diffraction"
+    },
+    "Project Chrono": {
+      "version": "10.0.0",
+      "executable": "python -c 'import pychrono; print(pychrono.CHRONO_VERSION)'",
+      "probe_command": ["python3", "-c", "import pychrono; print(pychrono.CHRONO_VERSION)"],
+      "official_source": "https://projectchrono.org/download/",
+      "official_repository": "https://github.com/projectchrono/chrono",
+      "license": "BSD-3-Clause",
+      "targets": ["ubuntu-x86_64-cpu", "ubuntu-arm64-cpu", "macos-apple-silicon-cpu", "macos-intel-cpu"],
+      "smoke_test": "Run the selected rigid-body/contact validation, recording constraint and energy diagnostics.",
+      "template": "chrono-rigid-body"
+    },
+    "Elmer FEM": {
+      "version": "9.0",
+      "executable": "ElmerSolver",
+      "probe_command": ["ElmerSolver", "--version"],
+      "official_source": "https://www.elmerfem.org/",
+      "official_repository": "https://github.com/ElmerCSC/elmerfem",
+      "license": "GPL-2.0-or-later",
+      "targets": ["ubuntu-x86_64-cpu", "ubuntu-arm64-cpu", "macos-apple-silicon-cpu-container", "macos-intel-cpu-container"],
+      "smoke_test": "Run the relevant official PDE example and retain convergence plus exported-field evidence.",
+      "template": "elmer-poisson"
+    },
+    "YADE": {
+      "version": "2024.02a",
+      "executable": "yade",
+      "probe_command": ["yade", "--version"],
+      "official_source": "https://yade-dem.org/wiki/Installation",
+      "official_repository": "https://gitlab.com/yade-dev/trunk",
+      "license": "GPL-3.0-or-later",
+      "targets": ["ubuntu-x86_64-cpu", "ubuntu-arm64-cpu", "macos-apple-silicon-cpu-container", "macos-intel-cpu-container"],
+      "smoke_test": "Run the selected contact/cohesion validation and record time-step stability evidence.",
+      "template": "yade-two-sphere-contact"
+    },
+    "Python/SciPy": {
+      "version": "NumPy 1.26.4 SciPy 1.13.1",
+      "executable": "python3",
+      "probe_command": ["python3", "-c", "import numpy, scipy; print('NumPy', numpy.__version__, 'SciPy', scipy.__version__)"],
+      "official_source": "https://scipy.org/",
+      "official_repository": "https://github.com/scipy/scipy",
+      "license": "BSD-3-Clause",
+      "targets": ["ubuntu-x86_64-cpu", "ubuntu-arm64-cpu", "macos-apple-silicon-cpu", "macos-intel-cpu"],
+      "smoke_test": "Run the bundled deterministic ODE, optimization, or reduced-order benchmark and record finite output plus the declared analytical-limit diagnostic.",
+      "template": "python-scipy-reduced-model"
+    }
+  }
+}

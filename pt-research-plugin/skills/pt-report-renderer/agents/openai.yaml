@@ -1,0 +1,6 @@
+interface:
+  display_name: "PT Research Report Renderer"
+  short_description: "Render auditable PT research PDFs"
+  default_prompt: "Use $pt-report-renderer through the PT orchestrator to render this case's retained research artifacts into a human PDF."
+policy:
+  allow_implicit_invocation: false

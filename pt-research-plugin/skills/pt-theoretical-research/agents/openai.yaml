@@ -1,0 +1,6 @@
+interface:
+  display_name: "PT Theoretical Research"
+  short_description: "Build essence, causal chains, and models"
+  default_prompt: "Use $pt-theoretical-research to perform the theory stage for this orchestrator-managed PT case."
+policy:
+  allow_implicit_invocation: false

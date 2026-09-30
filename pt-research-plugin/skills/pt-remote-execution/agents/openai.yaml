@@ -1,0 +1,6 @@
+interface:
+  display_name: PT Remote Execution
+  short_description: Safe SSH execution for approved PT simulations
+  default_prompt: Prepare or monitor an approved remote PT simulation through its SSH host alias.
+policy:
+  allow_implicit_invocation: false

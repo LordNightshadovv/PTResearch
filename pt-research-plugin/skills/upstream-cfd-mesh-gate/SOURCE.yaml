@@ -1,0 +1,13 @@
+{
+  "local_skill": "upstream-cfd-mesh-gate",
+  "repository": "https://github.com/csml-rpi/AI-CFD-Scientist",
+  "commit": "b7fa924c834ccfd81c67788b7d6b2e3c9ff13514",
+  "source_path": "cfd-skills/cfd-mesh-gate",
+  "license": "MIT (declared in README; no standalone license file)",
+  "retrieved_at": "2026-07-20",
+  "reuse_mode": "pt_bridge_with_preserved_snapshot",
+  "tree_hash": "f57bca25e9623a044cbc655f4a1ed5cfe8aeae4ab1c4bbbfc201ce7c16fafba7",
+  "file_hashes": {
+    "SKILL.md": "56e75bfd07865a6eec6b2e075c6e07c1b71c554e37093798e2bf21640119dc01"
+  }
+}

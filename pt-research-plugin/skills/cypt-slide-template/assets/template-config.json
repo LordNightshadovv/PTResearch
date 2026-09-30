@@ -1,0 +1,23 @@
+{
+  "eventLabel": "CYPT 20XX",
+  "teamLine": "Team name | Presenter",
+  "problemTitle": "10. Magnetic Gear",
+  "problemStatement": "Take several identical fidget spinners and attach neodymium magnets to their ends. If you place them side by side on a plane and rotate one of them, the remaining ones start to rotate only due to the magnetic field. Investigate and explain the phenomenon.",
+  "themeFile": "singapore-cypt-theme.json",
+  "sections": [
+    {"title": "Introduction", "subtitle": "Quantitative model"},
+    {"title": "Free motion", "subtitle": "Small oscillations"},
+    {"title": "Driven motion", "subtitle": "Velocity ratios"},
+    {"title": "Conclusion", "subtitle": "Further insights, summary"}
+  ],
+  "pageSections": {
+    "model": 0,
+    "characterization": 0,
+    "equations": 1,
+    "apparatus": 1,
+    "graph": 1,
+    "graphBanner": 1,
+    "comparison": 2,
+    "summary": 3
+  }
+}

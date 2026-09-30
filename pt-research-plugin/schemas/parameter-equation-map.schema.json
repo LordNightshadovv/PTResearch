@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pt-research.local/schemas/parameter-equation-map.schema.json",
+  "title": "PT experimental-parameter to observable equation map",
+  "type": "object",
+  "required": ["mappings", "symbols"],
+  "properties": {
+    "mappings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["experimental_parameter", "model_symbol", "entry_kind", "equation_or_boundary_id", "intermediate_state", "predicted_observable"],
+        "properties": {
+          "experimental_parameter": {"type": "string", "minLength": 1},
+          "model_symbol": {"type": "string", "minLength": 1},
+          "entry_kind": {"type": "string", "enum": ["equation", "term", "boundary_condition", "initial_condition"]},
+          "equation_or_boundary_id": {"type": "string", "minLength": 1},
+          "intermediate_state": {"type": "string", "minLength": 1},
+          "predicted_observable": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "symbols": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["symbol", "meaning", "si_unit", "status", "uncertainty_or_provenance", "admissible_range"],
+        "properties": {
+          "symbol": {"type": "string", "minLength": 1},
+          "meaning": {"type": "string", "minLength": 1},
+          "si_unit": {"type": "string", "minLength": 1},
+          "status": {"type": "string", "enum": ["controlled", "measured", "sourced", "fitted", "calculated", "observable"]},
+          "uncertainty_or_provenance": {"type": "string", "minLength": 1},
+          "admissible_range": {"type": "string", "minLength": 1},
+          "history_variable": {"type": "boolean"},
+          "parameter_class": {"type": "string", "enum": ["control_variable", "measured_state_variable", "material_constant", "hidden_uncertainty_source"]}
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}

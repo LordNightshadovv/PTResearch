@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pt-research.local/schemas/validation-report.schema.json",
+  "title": "PT numerical and physical validation report",
+  "type": "object",
+  "required": ["status", "checks", "accepted_for_scientific_use"],
+  "properties": {
+    "status": {"type": "string"}, "checks": {"type": "array", "items": {"type": "object"}},
+    "accepted_for_scientific_use": {"type": "boolean"}, "limitations": {"type": "array", "items": {"type": "string"}},
+    "numerical_verification": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string", "enum": ["not_started", "passed", "failed"]},
+        "criterion_value": {"type": "number"}, "criterion_threshold": {"type": "number"},
+        "computed_by": {"type": "string"}, "computed_at": {"type": "string"},
+        "evidence_locator": {"type": "string"}, "evidence_hash": {"type": "string"},
+        "failure_reason": {"type": "string"}
+      }
+    },
+    "parameter_calibration": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string", "enum": ["not_started", "passed", "failed"]},
+        "fit_artifact_hash": {"type": "string"}, "fit_data_hash": {"type": "string"},
+        "criterion_value": {"type": "number"}, "criterion_threshold": {"type": "number"},
+        "computed_by": {"type": "string"}, "computed_at": {"type": "string"},
+        "evidence_locator": {"type": "string"}, "evidence_hash": {"type": "string"},
+        "failure_reason": {"type": "string"}
+      }
+    },
+    "physical_validation": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string", "enum": ["not_started", "passed", "failed"]},
+        "independent": {"type": "boolean"}, "independent_dataset_id": {"type": "string"},
+        "data_hash": {"type": "string"}, "fit_artifact_hash": {"type": "string"}, "observation_ids": {"type": "array", "items": {"type": "string"}},
+        "uncertainty_method": {"type": "string"}, "criterion_value": {"type": "number"},
+        "criterion_threshold": {"type": "number"}, "computed_by": {"type": "string"},
+        "computed_at": {"type": "string"}, "evidence_locator": {"type": "string"},
+        "evidence_hash": {"type": "string"}, "failure_reason": {"type": "string"}
+      }
+    }
+  },
+  "additionalProperties": true
+}

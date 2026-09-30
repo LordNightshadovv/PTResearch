@@ -1,0 +1,13 @@
+{
+  "local_skill": "upstream-cfd-code-modify",
+  "repository": "https://github.com/csml-rpi/AI-CFD-Scientist",
+  "commit": "b7fa924c834ccfd81c67788b7d6b2e3c9ff13514",
+  "source_path": "cfd-skills/cfd-code-modify",
+  "license": "MIT (declared in README; no standalone license file)",
+  "retrieved_at": "2026-07-20",
+  "reuse_mode": "pt_bridge_with_preserved_snapshot",
+  "tree_hash": "e59ab55a3c6604153b5f63fbe5c1be14a099eaf2d10838b9d14c64efea4d8980",
+  "file_hashes": {
+    "SKILL.md": "9130ee636e6b306dfd2df7beee025b5ba8fac1c53a493c22c937b37d49960508"
+  }
+}

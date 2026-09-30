@@ -1,0 +1,7 @@
+[Unit]
+Description=PT simulation %i
+[Service]
+Type=simple
+WorkingDirectory=%h/PT-Simulations/%i
+ExecStart=%h/PT-Simulations/%i/start.sh
+Restart=no

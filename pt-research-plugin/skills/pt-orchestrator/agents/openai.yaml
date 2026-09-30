@@ -1,0 +1,6 @@
+interface:
+  display_name: "PT Research Orchestrator"
+  short_description: "Route and validate PT physics research"
+  default_prompt: "Use $pt-orchestrator to initialize or resume an auditable IYPT/CYPT research and simulation workflow."
+policy:
+  allow_implicit_invocation: true

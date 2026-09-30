@@ -1,0 +1,19 @@
+{
+  "local_skill": "upstream-deerflow-systematic-literature-review",
+  "repository": "https://github.com/bytedance/deer-flow",
+  "commit": "0cd55067f39823e7f0950498b5197a8195512481",
+  "source_path": "skills/public/systematic-literature-review",
+  "license": "MIT",
+  "retrieved_at": "2026-07-20",
+  "reuse_mode": "pt_bridge_with_preserved_snapshot",
+  "tree_hash": "9d5b356c0d6d48a12e9044f7f1dabe9d7bce342ab0eaeee113efc9f61e98f079",
+  "file_hashes": {
+    "SKILL.md": "9fe4891e86b29d0f0f192bddab4ff913b123ffd764a2af737a4d6bb334209b6a",
+    "evals/evals.json": "c2f0ac1f53f6599567034c81fad7b358c512b44595c65791268feda4d9eb61e9",
+    "evals/trigger_eval_set.json": "b04f49c4bc252d1465b4577310874927a1e449e7f4c346805ea8a80f17029597",
+    "scripts/arxiv_search.py": "8394239ec2e4be19f3cfe9e430bc02b53b921fc4692d93873656841e64dc1605",
+    "templates/apa.md": "eec7beba46eaa6b9693110e83c90dd5b7a899c693101f1e79930b5a0ccd37c0b",
+    "templates/bibtex.md": "1c4d2fafb49231513ecc59f7224f45817000573d07e3fdf1453784c0533c5fe7",
+    "templates/ieee.md": "fb07cf49613508fa1bc53de0a6179e3c8647af6c1fe1e047390db8e1562782f2"
+  }
+}

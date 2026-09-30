@@ -1,0 +1,25 @@
+version = 1
+
+[remote]
+host_alias = "pt-linux"
+username = "pt-runner"
+project_root = "/home/pt-runner/PT-Simulations"
+solver_root = "/home/pt-runner/PT-Solvers"
+connection_mode = "tailscale"
+
+[execution]
+backend = "systemd-user"
+container_policy = "rootless"
+default_cpus = 8
+default_memory_gb = 24
+default_gpu = "none"
+
+[monitoring]
+interval_minutes = 15
+notification_method = "codex-scheduled-task"
+stale_after_minutes = 20
+minimum_eta_samples = 5
+
+[transfer]
+method = "rsync"
+local_results_root = "~/PT-Simulations/results"

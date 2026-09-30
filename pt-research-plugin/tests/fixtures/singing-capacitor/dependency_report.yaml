@@ -1,0 +1,1 @@
+{"mode":"reduced_capability","dependencies":[{"name":"multiphysics FEM","available":false}],"limitations":["Route is specified, but no complete coupled solve is claimed."]}

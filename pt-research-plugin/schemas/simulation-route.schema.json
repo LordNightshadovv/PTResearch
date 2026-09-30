@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pt-research.local/schemas/simulation-route.schema.json",
+  "title": "PT simulation route",
+  "type": "object",
+  "required": ["selected_model_id", "selected_route", "primary_solver", "openfoam_classification", "single_solver_baseline", "second_solver_escalation", "governing_physics", "required_fields", "rationale"],
+  "properties": {
+    "selected_model_id": {"type": "string", "minLength": 1},
+    "selected_route": {"type": "string", "enum": ["analytical", "analytical_closed_form", "python_ode", "python_optimization", "reduced_order_model", "ode_rigid_body", "fourier_optics", "project_chrono", "elmer_fem", "yade", "openfoam_continuum", "hybrid", "unsupported"]},
+    "primary_solver": {"type": "string", "enum": ["OpenFOAM", "HCIPy", "Project Chrono", "Elmer FEM", "YADE", "Python/SciPy", "No numerical solver"]},
+    "openfoam_classification": {"type": "string", "enum": ["Primary", "Optional", "Unsuitable"]},
+    "single_solver_baseline": {"type": "string", "minLength": 1},
+    "auxiliary_models": {"type": "array", "items": {"type": "string"}},
+    "evidence_label": {"type": "string", "enum": ["predictive", "semi-empirical", "exploratory"]},
+    "known_missing_physics": {"type": "array", "items": {"type": "string"}},
+    "second_solver_escalation": {"type": "object"},
+    "governing_physics": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "required_fields": {"type": "array", "items": {"type": "string"}},
+    "rationale": {"type": "string", "minLength": 1},
+    "solver_requirements_id": {"type": "string"},
+    "selection_chain": {
+      "type": "object",
+      "required": ["phenomenon", "physics", "governing_equation_ids", "numerical_requirements", "solver"],
+      "properties": {
+        "phenomenon": {"type": "string", "minLength": 1},
+        "physics": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "governing_equation_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "numerical_requirements": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "solver": {"type": "string", "minLength": 1}
+      }
+    }
+  },
+  "additionalProperties": true
+}

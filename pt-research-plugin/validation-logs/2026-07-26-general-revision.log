@@ -1,0 +1,47 @@
+PT Research plugin general revision validation
+Date: 2026-07-26
+Release: 0.5.0
+
+COMMAND
+PYTHONPYCACHEPREFIX=/private/tmp/pt-research-pycache python3 -m unittest discover -s pt-research-plugin/tests -v
+RESULT
+PASS - 56 tests, 0 failures, 0 errors
+
+COMMAND
+PYTHONPYCACHEPREFIX=/private/tmp/pt-research-pycache python3 -m unittest discover -s pt-research-plugin/skills/pt-theoretical-research/tests -v
+RESULT
+PASS - 7 tests, 0 failures, 0 errors
+
+TOTAL
+63 plugin tests passed
+
+COMMAND
+PYTHONPYCACHEPREFIX=/private/tmp/pt-research-pycache python3 pt-research-plugin/scripts/validate_plugin.py pt-research-plugin
+RESULT
+PASS - PT plugin structure, policies, 19 schemas, provenance, and licenses
+
+COMMAND
+PYTHONPYCACHEPREFIX=/private/tmp/pt-research-pycache python3 pt-research-plugin/scripts/validate_artifacts.py pt-research-plugin/tests/fixtures/pinhole-sunglasses
+RESULT
+PASS - legacy v1 artifact compatibility
+
+COMMAND
+PYTHONPYCACHEPREFIX=/private/tmp/pt-research-pycache python3 pt-research-plugin/scripts/validate_deep_theory.py deliverables/iypt-2027-consolidated
+RESULT
+PASS - 17 existing reports; archive was inspected but not regenerated or repaired
+
+COMMAND
+/private/tmp/pt-plugin-validate-venv/bin/python /Users/vold/.codex/skills/.system/skill-creator/scripts/quick_validate.py <changed-skill>
+RESULT
+PASS - pt-orchestrator, pt-theoretical-research, pt-simulation-router,
+pt-simulation-packager, and pt-report-renderer
+
+COMMAND
+/private/tmp/pt-plugin-validate-venv/bin/python /Users/vold/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py pt-research-plugin
+RESULT
+PASS - official plugin validator
+
+COMMAND
+PYTHONPYCACHEPREFIX=/private/tmp/pt-research-pycache python3 -m py_compile pt-research-plugin/scripts/scientific_contract.py pt-research-plugin/scripts/validate_artifacts.py pt-research-plugin/scripts/scaffold_research_case.py pt-research-plugin/tests/test_scientific_contract.py
+RESULT
+PASS - Python compilation

@@ -1,0 +1,5 @@
+[Unit]
+Description=PT status refresh %i
+[Service]
+Type=oneshot
+ExecStart=%h/PT-Simulations/%i/status.sh

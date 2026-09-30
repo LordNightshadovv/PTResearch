@@ -1,0 +1,1 @@
+{"mode":"reduced_capability","dependencies":[{"name":"OpenFOAM","available":false,"detail":"portable fixture environment"}],"limitations":["The continuum route is accepted, but no case generation or solve is claimed."]}

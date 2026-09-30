@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "case_id": "replace-me",
+  "source": {
+    "method": "bounded PT process learning",
+    "article": "https://nvlabs.github.io/SoL-Pi/",
+    "adaptation_scope": "workflow instructions and auditable artifacts only",
+    "authority": "current authorized PT project; no new solver, network, or filesystem authority"
+  },
+  "budget": {
+    "max_lineages": 3,
+    "max_iterations_per_lineage": 3,
+    "max_review_cycles_per_lineage": 2,
+    "exit_condition": "Stop on accepted evidence, failed review, invalid evidence, or exhausted budget.",
+    "spent_lineages": 0
+  },
+  "splits": {
+    "development_ids": [],
+    "held_out_ids": [],
+    "held_out_manifest_hash": "",
+    "held_out_sealed": false,
+    "isolation_mode": "procedural_blind_reviewer",
+    "held_out_feedback_to_search": false
+  },
+  "rules": [],
+  "events": [],
+  "pending_consolidation": []
+}

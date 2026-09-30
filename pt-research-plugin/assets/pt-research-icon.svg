@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title description">
+  <title id="title">PT Research</title>
+  <desc id="description">A blue PT monogram with a teal causal evidence chain.</desc>
+  <path d="M50 174V58h39c38 0 38 55 0 55H50" fill="none" stroke="#0B74E5" stroke-linecap="round" stroke-linejoin="round" stroke-width="22"/>
+  <path d="M118 58h88m-44 0v116" fill="none" stroke="#0B74E5" stroke-linecap="round" stroke-linejoin="round" stroke-width="22"/>
+  <path d="m30 192 52-38 47 34 47-38 50 30" fill="none" stroke="#35B6A2" stroke-linecap="round" stroke-linejoin="round" stroke-width="14"/>
+  <circle cx="30" cy="192" r="10" fill="#35B6A2"/>
+  <circle cx="82" cy="154" r="10" fill="#35B6A2"/>
+  <circle cx="129" cy="188" r="10" fill="#35B6A2"/>
+  <circle cx="176" cy="150" r="10" fill="#35B6A2"/>
+  <circle cx="226" cy="180" r="10" fill="#35B6A2"/>
+</svg>

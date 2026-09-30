@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pt-research.local/schemas/runtime.schema.json",
+  "title": "Simulation runtime manifest",
+  "type": "object",
+  "required": ["runtime", "execution", "validation"],
+  "properties": {
+    "runtime": {"type": "object", "required": ["operating_system", "architecture", "solver", "required_packages"]},
+    "execution": {"type": "object", "required": ["entrypoint"]},
+    "validation": {"type": "object", "required": ["required_checks"]}
+  },
+  "additionalProperties": true
+}

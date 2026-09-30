@@ -1,0 +1,1 @@
+{"selected_model_id":"fourier-pupil","route":"fourier_optics","assumptions":["scalar diffraction"],"quantities_of_interest":[{"name":"retinal modulation transfer","unit":"1"},{"name":"transmittance","unit":"1"}],"validation_requirements":["recover Airy limit","compare with measured target contrast"]}

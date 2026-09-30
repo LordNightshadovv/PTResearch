@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema_version", "project_id", "run_id", "state", "solver", "progress_mode", "elapsed_seconds", "last_updated", "warnings", "fatal_error"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "state": {"enum": ["preparing", "queued", "starting", "running", "checkpointing", "paused", "completed", "failed", "cancelled", "stale", "unreachable", "unknown"]},
+    "progress_percent": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+    "estimated_remaining_seconds": {"type": ["number", "null"], "minimum": 0}
+  }
+}

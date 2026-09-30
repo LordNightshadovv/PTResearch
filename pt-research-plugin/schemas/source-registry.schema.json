@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pt-research.local/schemas/source-registry.schema.json",
+  "title": "PT source registry",
+  "type": "object",
+  "required": ["sources"],
+  "properties": {"sources": {"type": "array", "items": {"type": "object", "required": ["id", "title", "access_status", "quality_tier"], "properties": {"id": {"type": "string"}, "title": {"type": "string"}, "authors": {"type": "array", "items": {"type": "string"}}, "year": {"type": "integer"}, "venue": {"type": "string"}, "doi_or_stable_id": {"type": "string"}, "access_status": {"type": "string"}, "quality_tier": {"type": "string"}, "directness": {"type": "string", "enum": ["direct_same_apparatus", "direct_same_mechanism", "canonical_theory", "parameter_data", "numerical_method", "contextual_only", "official_prompt_only"]}, "url": {"type": "string"}}}}},
+  "additionalProperties": true
+}

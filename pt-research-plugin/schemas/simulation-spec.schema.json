@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pt-research.local/schemas/simulation-spec.schema.json",
+  "title": "PT simulation specification",
+  "type": "object",
+  "required": ["selected_model_id", "route", "assumptions", "quantities_of_interest", "validation_requirements"],
+  "properties": {
+    "selected_model_id": {"type": "string", "minLength": 1}, "route": {"type": "string", "minLength": 1},
+    "assumptions": {"type": "array", "items": {"type": "string"}},
+    "quantities_of_interest": {"type": "array", "items": {"type": "object", "required": ["name", "unit"], "properties": {"name": {"type": "string"}, "unit": {"type": "string"}}}},
+    "validation_requirements": {"type": "array", "items": {"type": "string"}},
+    "calibration": {
+      "type": "object",
+      "properties": {
+        "calibration_contract_version": {"type": "integer"},
+        "plan_ref": {"type": "string", "minLength": 1},
+        "claim_ceiling": {"type": "string", "minLength": 1},
+        "calibrated_parameters": {"type": "array", "items": {"type": "string"}},
+        "validation_boundary": {"type": "string", "minLength": 1}
+      }
+    }
+  },
+  "additionalProperties": true
+}

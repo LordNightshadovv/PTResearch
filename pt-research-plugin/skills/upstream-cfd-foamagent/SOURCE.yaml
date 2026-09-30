@@ -1,0 +1,13 @@
+{
+  "local_skill": "upstream-cfd-foamagent",
+  "repository": "https://github.com/csml-rpi/AI-CFD-Scientist",
+  "commit": "b7fa924c834ccfd81c67788b7d6b2e3c9ff13514",
+  "source_path": "cfd-skills/cfd-foamagent",
+  "license": "MIT (declared in README; no standalone license file)",
+  "retrieved_at": "2026-07-20",
+  "reuse_mode": "pt_bridge_with_preserved_snapshot",
+  "tree_hash": "bdd26ce7711bccbbe2dda3a6ab4deafc7a9f06609062840a6b495f517083b915",
+  "file_hashes": {
+    "SKILL.md": "017a938e3a8640397d99351510ad5ea7909d0086c567b01806c64ecfa8fde0fb"
+  }
+}

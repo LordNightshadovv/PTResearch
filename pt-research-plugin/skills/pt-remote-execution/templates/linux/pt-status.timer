@@ -1,0 +1,7 @@
+[Unit]
+Description=PT status timer %i
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=15min
+[Install]
+WantedBy=timers.target

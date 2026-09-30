@@ -1,0 +1,6 @@
+interface:
+  display_name: "Upstream CFD Experiment"
+  short_description: "Run accepted OpenFOAM baselines and sweeps"
+  default_prompt: "Use $upstream-cfd-experiment with this accepted baseline and experiment matrix."
+policy:
+  allow_implicit_invocation: false

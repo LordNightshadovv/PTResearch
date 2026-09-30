@@ -1,0 +1,8 @@
+{
+  "OpenFOAM": {"case": "official closest v14 tutorial", "must_record": ["blockMesh.log", "checkMesh.log", "solver.log", "residual history", "post-processing output"], "pass_condition": "mesh is valid and the defined tutorial observable is reproduced within its documented tolerance"},
+  "HCIPy": {"case": "circular-aperture diffraction", "must_record": ["environment version", "radial profile data", "analytic Airy comparison"], "pass_condition": "sampling-convergence and analytic-profile criteria in the case specification pass"},
+  "Project Chrono": {"case": "selected rigid/contact demonstration", "must_record": ["module availability", "constraint residual", "energy diagnostic", "time-step sensitivity"], "pass_condition": "the declared constraints and diagnostics meet the predeclared case tolerance"},
+  "Elmer FEM": {"case": "relevant official PDE example", "must_record": ["mesh", "solver convergence", "exported fields", "reference comparison"], "pass_condition": "mesh-refinement and reference checks meet the case specification"},
+  "YADE": {"case": "two-sphere contact or selected cohesive-contact validation", "must_record": ["version", "contact-force trace", "stable timestep evidence", "reference comparison"], "pass_condition": "contact and timestep-stability checks meet the case specification"},
+  "Python/SciPy": {"case": "deterministic ODE, optimization, or reduced-order smoke benchmark", "must_record": ["Python/NumPy/SciPy versions", "finite output", "limiting-case comparison"], "pass_condition": "the synthetic output is finite and matches the declared analytical limit"}
+}

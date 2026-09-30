@@ -1,0 +1,9 @@
+Host pt-linux
+    HostName <LAN-IP-OR-TAILSCALE-NAME>
+    User pt-runner
+    IdentityFile ~/.ssh/pt_simulation_ed25519
+    IdentitiesOnly yes
+    AddKeysToAgent yes
+    UseKeychain yes
+    ServerAliveInterval 30
+    ServerAliveCountMax 3

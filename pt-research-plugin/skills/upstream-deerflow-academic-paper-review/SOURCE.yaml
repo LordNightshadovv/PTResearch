@@ -1,0 +1,13 @@
+{
+  "local_skill": "upstream-deerflow-academic-paper-review",
+  "repository": "https://github.com/bytedance/deer-flow",
+  "commit": "0cd55067f39823e7f0950498b5197a8195512481",
+  "source_path": "skills/public/academic-paper-review",
+  "license": "MIT",
+  "retrieved_at": "2026-07-20",
+  "reuse_mode": "pt_bridge_with_preserved_snapshot",
+  "tree_hash": "559ec9c47e26da53b773385793d0135fc42558ec3a4a61b3e28fe205d79914d0",
+  "file_hashes": {
+    "SKILL.md": "a0285baaeacc916bf45751c06db37745b195ddd4ec30e271ec1472f6cd48e8aa"
+  }
+}

@@ -1,0 +1,1 @@
+{"selected_model_id":"coupled-chain","route":"hybrid","assumptions":["linear structural response about operating point"],"quantities_of_interest":[{"name":"sound pressure","unit":"Pa"}],"validation_requirements":["frequency scaling","mode-shape comparison","measured sound spectrum"]}

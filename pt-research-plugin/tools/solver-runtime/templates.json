@@ -1,0 +1,8 @@
+{
+  "openfoam-cavity": {"entrypoint": "scripts/run.sh", "validation": ["blockMesh", "checkMesh", "residual history", "mass conservation", "reference comparison"]},
+  "hcipy-aperture-diffraction": {"entrypoint": "scripts/run.py", "validation": ["import", "analytic Airy-profile comparison", "sampling convergence"]},
+  "chrono-rigid-body": {"entrypoint": "scripts/run.py", "validation": ["import", "constraint residual", "energy diagnostic", "time-step sensitivity"]},
+  "elmer-poisson": {"entrypoint": "scripts/run.sh", "validation": ["ElmerGrid", "ElmerSolver", "mesh refinement", "analytic/reference comparison"]},
+  "yade-two-sphere-contact": {"entrypoint": "scripts/run.py", "validation": ["import", "contact force", "stable time step", "reference comparison"]},
+  "python-scipy-reduced-model": {"entrypoint": "scripts/run.py", "validation": ["import", "finite-value check", "closed-form limit", "deterministic output"]}
+}

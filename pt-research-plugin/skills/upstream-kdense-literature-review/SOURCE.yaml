@@ -1,0 +1,21 @@
+{
+  "local_skill": "upstream-kdense-literature-review",
+  "repository": "https://github.com/K-Dense-AI/scientific-agent-skills",
+  "commit": "3f825caafe149b7853ec8c4d1dd7f4553ea6b2a5",
+  "source_path": "skills/literature-review",
+  "license": "MIT",
+  "retrieved_at": "2026-07-20",
+  "reuse_mode": "pt_bridge_with_preserved_snapshot",
+  "tree_hash": "271a92894f92edea7c94368dc554d727e05127b8b31586c101e334c4d6cb130e",
+  "file_hashes": {
+    "SKILL.md": "bd2db633e1565f4a25af55ff78cff668b791685b93f1558166320701ff564980",
+    "assets/review_template.md": "e9db0f8e00f894fc55c474ca0355a86fd72eb9bb5456e1253e740d3c06e74208",
+    "references/citation_styles.md": "a62f97c9f1c50da0627033187da5632f9fec00679fc5e8c0e97b217210c0c79b",
+    "references/database_strategies.md": "199c3b8e08c4df550ef71bf30667cfd70ca76f32e8c7121d35082b622494b660",
+    "scripts/generate_pdf.py": "dd561948e30101cda0955762a38f463b4ac588b13082b5717b938c3c1d772da3",
+    "scripts/generate_schematic.py": "a426ae30ed9185f250245f35c868e6f8aae6096e94a4b8392283dc05f089c041",
+    "scripts/generate_schematic_ai.py": "0e1708bc163eab7e4440ae7d9d61ed1cd123bdc401499d46cb3df30f1b9f349c",
+    "scripts/search_databases.py": "4b572895633b765a0f0214ec455149dd6282c657f5659793213687003f3fa630",
+    "scripts/verify_citations.py": "ab492d2670865cd3a632024121c7449bb7138dc1ca565fbd0c0e697635104d55"
+  }
+}

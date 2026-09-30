@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pt-research.local/schemas/essence-chain.schema.json",
+  "title": "Physical essence and causal chain",
+  "type": "object",
+  "required": ["essence", "causal_chain"],
+  "properties": {
+    "essence": {"type": "string", "minLength": 1},
+    "causal_chain": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["id", "cause", "effect"], "properties": {"id": {"type": "string"}, "cause": {"type": "string"}, "effect": {"type": "string"}, "model_id": {"type": "string"}, "unresolved": {"type": "boolean"}}}}
+  },
+  "additionalProperties": true
+}

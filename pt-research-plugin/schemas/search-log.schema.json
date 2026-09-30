@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pt-research.local/schemas/search-log.schema.json",
+  "title": "PT search log",
+  "type": "object",
+  "required": ["searches"],
+  "properties": {"searches": {"type": "array", "items": {"type": "object", "required": ["query", "channel", "status"], "properties": {"query": {"type": "string"}, "channel": {"type": "string"}, "status": {"type": "string"}}}}},
+  "additionalProperties": true
+}

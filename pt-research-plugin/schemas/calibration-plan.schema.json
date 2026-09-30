@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pt-research.local/schemas/calibration-plan.schema.json",
+  "title": "PT parameter calibration and independent validation plan",
+  "type": "object",
+  "required": [
+    "calibration_contract_version",
+    "status",
+    "claim_ceiling",
+    "dataset",
+    "objective",
+    "parameter_definitions",
+    "split",
+    "fit_result",
+    "independent_validation"
+  ],
+  "properties": {
+    "calibration_contract_version": {"type": "integer"},
+    "status": {"type": "string", "enum": ["planned", "not_required", "calibrated", "physically_validated", "failed"]},
+    "claim_ceiling": {"type": "string", "minLength": 1},
+    "not_required_justification": {"type": "string"},
+    "dataset": {
+      "type": "object",
+      "required": ["dataset_id", "source", "source_locator", "content_hash", "unit_system", "variables", "observation_index"],
+      "properties": {
+        "dataset_id": {"type": "string", "minLength": 1},
+        "source": {"type": "string", "minLength": 1},
+        "source_locator": {"type": "string", "minLength": 1},
+        "content_hash": {"type": "string", "minLength": 1},
+        "unit_system": {"type": "string", "minLength": 1},
+        "variables": {"type": "array", "items": {"type": "object"}},
+        "observation_index": {"type": "array", "items": {"type": "object"}}
+      }
+    },
+    "objective": {
+      "type": "object",
+      "required": ["metric", "formula", "direction", "predeclared_at", "target_observables", "acceptance_threshold"],
+      "properties": {
+        "metric": {"type": "string", "minLength": 1},
+        "formula": {"type": "string", "minLength": 1},
+        "direction": {"type": "string", "enum": ["minimize", "maximize"]},
+        "predeclared_at": {"type": "string"},
+        "target_observables": {"type": "array", "items": {"type": "string"}},
+        "weights": {"type": ["string", "array", "object"]},
+        "acceptance_threshold": {"type": "object"}
+      }
+    },
+    "parameter_definitions": {
+      "type": "array",
+      "items": {"type": "object"}
+    },
+    "split": {
+      "type": "object",
+      "required": [
+        "strategy",
+        "fit_observation_ids",
+        "validation_observation_ids",
+        "fit_group_ids",
+        "validation_group_ids",
+        "fit_replicate_ids",
+        "validation_replicate_ids",
+        "fit_data_hash",
+        "validation_data_hash"
+      ],
+      "properties": {
+        "strategy": {"type": "string"},
+        "fit_observation_ids": {"type": "array", "items": {"type": "string"}},
+        "validation_observation_ids": {"type": "array", "items": {"type": "string"}},
+        "fit_group_ids": {"type": "array", "items": {"type": "string"}},
+        "validation_group_ids": {"type": "array", "items": {"type": "string"}},
+        "fit_replicate_ids": {"type": "array", "items": {"type": "string"}},
+        "validation_replicate_ids": {"type": "array", "items": {"type": "string"}},
+        "fit_data_hash": {"type": "string"},
+        "validation_data_hash": {"type": "string"}
+      }
+    },
+    "fit_result": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": {"type": "string"},
+        "fit_artifact_locator": {"type": "string"},
+        "fit_artifact_hash": {"type": "string"},
+        "fit_data_hash": {"type": "string"},
+        "fit_started_at": {"type": "string"},
+        "frozen_at": {"type": "string"},
+        "parameter_values": {"type": "array", "items": {"type": "object"}},
+        "objective_value": {"type": ["number", "null"]},
+        "residual_summary": {"type": "object"},
+        "numerical_error": {"type": "object"}
+      }
+    },
+    "independent_validation": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": {"type": "string"},
+        "dataset_id": {"type": "string"},
+        "data_hash": {"type": "string"},
+        "fit_artifact_hash": {"type": "string"},
+        "observation_ids": {"type": "array", "items": {"type": "string"}},
+        "group_ids": {"type": "array", "items": {"type": "string"}},
+        "replicate_ids": {"type": "array", "items": {"type": "string"}},
+        "comparison_method": {"type": "string"},
+        "uncertainty_method": {"type": "string"},
+        "acceptance_criterion": {"type": "string"},
+        "objective_value": {"type": ["number", "null"]},
+        "residual_summary": {"type": "object"},
+        "numerical_error": {"type": "object"},
+        "performed_at": {"type": "string"}
+      }
+    }
+  },
+  "additionalProperties": true
+}

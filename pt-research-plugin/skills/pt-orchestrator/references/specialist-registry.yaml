@@ -1,0 +1,145 @@
+specialists:
+  cypt-slide-template:
+    role: editable_cypt_powerpoint_styling
+    prerequisites: [source_presentation_or_template_request]
+    input: [source_presentation, verified_case_artifacts_if_scientific_claims_are_included]
+    output: [editable_cypt_presentation]
+    allowed_when: [initialized, prompt_contracted, literature_discovery, literature_screened, evidence_audited, essence_and_chain_proposed, candidate_models_built, candidate_models_selected, simulation_routed, simulation_specified, package_implemented, synthetic_smoke_tested, case_generated, baseline_executed, numerically_validated, physically_validated, parameter_study_complete, handoff_complete]
+    dependency_checks: [source_file_access, presentation_runtime]
+    failure_behavior: preserve_source_and_report_unverified_editability_or_scientific_claims
+    return_to_orchestrator: styling_is_not_scientific_acceptance
+  pt-self-improvement:
+    role: bounded_process_learning_and_policy_consolidation
+    prerequisites: [project_state.yaml, timeline.ndjson]
+    input: [project_state.yaml, timeline.ndjson, learning/audit-ledger.json, workspace/AGENTS.md, plugin/AGENTS.md]
+    output: [learning/audit-ledger.json, learning/pending-consolidation.json, canonical AGENTS managed sections]
+    allowed_when: [initialized, prompt_contracted, literature_discovery, literature_screened, evidence_audited, essence_and_chain_proposed, candidate_models_built, candidate_models_selected, simulation_routed, simulation_specified, package_implemented, synthetic_smoke_tested, case_generated, baseline_executed, numerically_validated, physically_validated, parameter_study_complete, handoff_complete]
+    dependency_checks: [readable_workspace_policy, writable_canonical_plugin_policy, bounded_case_ledger]
+    failure_behavior: preserve_ledger_and_mark_provisional_or_deferred_without_broadening_authority
+    return_to_orchestrator: promote_only_after_independent_held_out_and_dual_agents_consolidation
+  pt-theoretical-research:
+    role: scientific_synthesis_owner
+    prerequisites: [problem_contract.yaml]
+    input: [problem_contract.yaml, preliminary_query_map.yaml]
+    output: [apparatus_fidelity.yaml, essence_and_chain.yaml, evidence_matrix.yaml, model_registry.yaml, theory/equations.yaml, parameter_equation_map.yaml, theoretical_report.md, stopping_decision]
+    allowed_when: [prompt_contracted, literature_discovery, literature_screened, evidence_audited]
+    dependency_checks: [python3]
+    failure_behavior: preserve_partial_artifacts_and_record_justified_stop_when_needed
+    return_to_orchestrator: validate_theory_artifacts_before_selection
+  upstream-kdense-literature-review:
+    role: broad_retrieval
+    prerequisites: [problem_contract.yaml, preliminary_query_map.yaml]
+    input: [problem_contract.yaml, preliminary_query_map.yaml]
+    output: [upstream/kdense/search_results, upstream/kdense/search_log.yaml]
+    allowed_when: [literature_discovery]
+    dependency_checks: [network_or_academic_search_tool]
+    failure_behavior: write_dependency_report_and_empty_search_record
+    return_to_orchestrator: never_claim_completeness_when_channels_are_missing
+  upstream-deerflow-systematic-literature-review:
+    role: corpus_screening_and_synthesis
+    prerequisites: [source_registry.yaml]
+    input: [source_registry.yaml]
+    output: [upstream/deerflow_slr/synthesis.md, upstream/deerflow_slr/screening_log.yaml]
+    allowed_when: [literature_screened]
+    dependency_checks: [readable_source_registry]
+    failure_behavior: preserve_empty_blocked_and_exclusion_results
+    return_to_orchestrator: synthesis_requires_native_reconciliation
+  upstream-deerflow-academic-paper-review:
+    role: deep_paper_audit
+    prerequisites: [selected_papers.yaml]
+    input: [selected_papers.yaml]
+    output: [paper_cards, evidence_matrix.yaml]
+    allowed_when: [evidence_audited]
+    dependency_checks: [accessible_paper_text]
+    failure_behavior: label_abstract_only_or_unavailable
+    return_to_orchestrator: report_equation_and_regime_gaps
+  pt-simulation-router:
+    role: physics_first_numerical_route_selection
+    prerequisites: [problem_contract.yaml, apparatus_fidelity.yaml, essence_and_chain.yaml, evidence_matrix.yaml, model_registry.yaml, theory/equations.yaml, parameter_equation_map.yaml]
+    input: [problem_contract.yaml, apparatus_fidelity.yaml, essence_and_chain.yaml, evidence_matrix.yaml, model_registry.yaml, theory/equations.yaml, parameter_equation_map.yaml]
+    output: [solver_requirements.yaml, simulation_route.yaml, simulation_spec.yaml, physics_first_selection_chain]
+    allowed_when: [candidate_models_selected]
+    dependency_checks: [selected_model_complete]
+    failure_behavior: return_to_theory_stage
+    return_to_orchestrator: validate_route_references_selected_model
+  pt-simulation-packager:
+    role: cross_platform_single_solver_packaging
+    prerequisites: [simulation_route.yaml, simulation_spec.yaml, target_platform_decision]
+    input: [simulation_route.yaml, simulation_spec.yaml, dependency_report.yaml]
+    output: [runtime.yaml, simulation_handoff.yaml, simulation_package_manifest.yaml, dependency_report.yaml, experiment_to_simulation_validation_chain, executable_package, synthetic_smoke_receipt, machine_readable_results]
+    allowed_when: [simulation_routed, simulation_specified]
+    dependency_checks: [user_authority_for_install_or_execution]
+    failure_behavior: preserve_package_plan_and_record_platform_limitations
+    return_to_orchestrator: distinguish_native_containerized_and_untested_targets
+  pt-remote-execution:
+    role: alias_only_remote_linux_execution_and_monitoring
+    prerequisites: [simulation_route.yaml, simulation_spec.yaml, target_platform_decision, explicit_remote_execution_authority]
+    input: [simulation_route.yaml, simulation_spec.yaml, runtime.yaml, remote.toml]
+    output: [remote_runtime_receipt.yaml, remote_status_receipt.json, dependency_report.yaml]
+    allowed_when: [simulation_specified, case_generated, baseline_executed]
+    dependency_checks: [local_openssh_alias, explicit_user_authority_for_mutation]
+    failure_behavior: preserve_read_only_probe_and_mark_remote_unreachable_or_blocked
+    return_to_orchestrator: distinguish_connection_process_initialization_and_scientific_acceptance
+  pt-openfoam-environment-manager:
+    role: runtime_probe_tutorial_selection_and_portable_export
+    prerequisites: [simulation_spec.yaml]
+    input: [simulation_spec.yaml, dependency_report.yaml]
+    output: [dependency_report.yaml, runtime.yaml, openfoam/tutorial_reference.yaml]
+    allowed_when: [simulation_specified]
+    dependency_checks: [user_authority_for_install_or_execution]
+    failure_behavior: record_reduced_capability_and_offer_linux_export
+    return_to_orchestrator: require_runtime_choice_before_case_generation
+  pt-report-renderer:
+    role: human_facing_pdf_renderer
+    prerequisites: [problem_contract.yaml, essence_and_chain.yaml, model_registry.yaml]
+    input: [research_artifacts]
+    output: [reports/research-report.pdf]
+    allowed_when: [candidate_models_selected, simulation_specified, handoff_complete]
+    dependency_checks: [reportlab_or_equivalent]
+    failure_behavior: preserve_research_report_markdown_and_record_renderer_failure
+    return_to_orchestrator: report_is_a_presentation_not_scientific_acceptance
+  upstream-sim-plugin-openfoam:
+    role: openfoam_knowledge_and_case_audit
+    prerequisites: [simulation_spec.yaml]
+    input: [simulation_spec.yaml]
+    output: [openfoam/openfoam_design_review.yaml]
+    allowed_when: [simulation_specified]
+    dependency_checks: [openfoam_distribution_probe]
+    failure_behavior: reduced_capability_design_review_only
+    return_to_orchestrator: block_distribution_or_syntax_mismatch
+  upstream-cfd-foamagent:
+    role: tutorial_grounded_case_generation
+    prerequisites: [simulation_spec.yaml, openfoam/openfoam_design_review.yaml]
+    input: [simulation_spec.yaml]
+    output: [openfoam/case_manifest.yaml, openfoam/generated_case]
+    allowed_when: [simulation_specified]
+    dependency_checks: [foam_agent_python_dependencies, rag_index, compatible_openfoam]
+    failure_behavior: dependency_report_without_case_generated_claim
+    return_to_orchestrator: distinguish_generated_completed_and_accepted
+  upstream-cfd-mesh-gate:
+    role: mesh_and_timestep_sensitivity
+    prerequisites: [openfoam/generated_case, validation_targets.yaml]
+    input: [openfoam/generated_case, validation_targets.yaml]
+    output: [openfoam/selected_mesh_spec.json, openfoam/mesh_validation.yaml]
+    allowed_when: [case_generated, baseline_executed]
+    dependency_checks: [baseline_case_accepted, quantities_of_interest_extractable]
+    failure_behavior: retain_all_failed_levels_and_block_acceptance
+    return_to_orchestrator: mesh_gate_required_for_scientific_acceptance
+  upstream-cfd-experiment:
+    role: baseline_execution_and_parameter_sweeps
+    prerequisites: [accepted_baseline_case, experiment_matrix.yaml]
+    input: [accepted_baseline_case, experiment_matrix.yaml]
+    output: [openfoam/cases, openfoam/run_results.yaml]
+    allowed_when: [numerically_validated, physically_validated]
+    dependency_checks: [baseline_accepted, mesh_gate_passed]
+    failure_behavior: classify_numerical_physical_or_noninformative_failure
+    return_to_orchestrator: exit_code_never_implies_validity
+  upstream-cfd-code-modify:
+    role: custom_openfoam_cpp_model
+    prerequisites: [approved_custom_model_spec.yaml]
+    input: [approved_custom_model_spec.yaml]
+    output: [openfoam/custom_library, openfoam/compile_report.yaml]
+    allowed_when: [simulation_specified, case_generated]
+    dependency_checks: [complete_equations_dimensions_limits_tests, wmake]
+    failure_behavior: refuse_incomplete_mathematics_and_bound_compile_fixes
+    return_to_orchestrator: record_code_provenance_and_limiting_tests

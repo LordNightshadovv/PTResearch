@@ -1,0 +1,6 @@
+interface:
+  display_name: "PT Simulation Packager"
+  short_description: "Package one PT solver reproducibly for Ubuntu or macOS"
+  default_prompt: "Use $pt-simulation-packager through the PT orchestrator to prepare this accepted PT simulation for its chosen platform."
+policy:
+  allow_implicit_invocation: false

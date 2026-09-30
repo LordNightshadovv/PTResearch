@@ -1,0 +1,40 @@
+{
+  "name": "pt-research-plugin",
+  "version": "0.7.0+codex.20260920122209",
+  "description": "Auditable IYPT/CYPT research with equation lineage, physics-first routing, executable synthetic simulation packages, receipt-gated readiness, and validation-chain gates.",
+  "author": {
+    "name": "PT Research Team"
+  },
+  "keywords": [
+    "IYPT",
+    "CYPT",
+    "physics",
+    "research",
+    "simulation",
+    "OpenFOAM",
+    "HCIPy",
+    "Project Chrono",
+    "Elmer FEM",
+    "YADE"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "PT Research",
+    "shortDescription": "Physics research and simulation routing",
+    "longDescription": "Build apparatus-faithful, evidence-backed causal models for IYPT/CYPT problems, compare alternatives and opposing evidence, trace every equation and parameter, identify regimes before selecting one primary solver, and prepare executable synthetic-runnable packages with truthful receipt-gated software and experimental readiness.",
+    "developerName": "PT Research Team",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "brandColor": "#0B74E5",
+    "composerIcon": "./assets/pt-research-icon.svg",
+    "logo": "./assets/pt-research-icon.svg",
+    "defaultPrompt": [
+      "Research this IYPT problem and identify its physical essence.",
+      "Route this selected model to the right simulation method.",
+      "Resume this PT research case from its saved artifacts."
+    ]
+  }
+}

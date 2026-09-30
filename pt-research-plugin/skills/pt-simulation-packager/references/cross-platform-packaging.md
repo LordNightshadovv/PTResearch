@@ -1,0 +1,9 @@
+# Cross-platform packaging policy
+
+Target record: target host, OS, CPU architecture, GPU/backend/memory, container permission, one or dual platform, solver/module/version, execution mode, official-support status, known limitation. Native first; documented container/VM second. Do not claim portable source is tested cross-platform.
+
+Runtime contract: source the solver/version from `tools/solver-runtime/solver-locks.json`; first probe, then reuse only a matching version. Current-host installation needs explicit user authorisation and downloads from the recorded official source. A package for another host contains a generated installer or container recipe, not a solver binary by default. Offline bundles are per OS/architecture/GPU backend and must contain only redistributable material or name missing official downloads. A passed external smoke receipt identifies the runtime only. `simulation_package_manifest.json` can set `runnable_claim: true` only after the package implementation's synthetic receipt and all package gates pass; an external solver receipt is a separate dependency record.
+
+HCIPy: pinned Conda/Mamba or venv; expected Ubuntu/macOS Apple Silicon/macOS Intel. Project Chrono: PyChrono if required modules are present, otherwise locked CMake build; CPU for ordinary mechanics; FSI-SPH needs documented CUDA/HIP hardware and rejects full macOS target. Elmer: official binary/package or reproducible build; containerized Linux if macOS native is unreliable. YADE: native Ubuntu/Debian, Linux container/VM on macOS unless current official support proves otherwise. OpenFOAM: official Linux distribution; macOS verified native build or Linux container, with exact distribution/version.
+
+For dual targets, place shared assets under `shared/` and target launch layers under `platforms/ubuntu-x86_64`, `ubuntu-arm64`, `macos-apple-silicon`, and/or `macos-intel`. Omit untested folders or mark their limitation explicitly.

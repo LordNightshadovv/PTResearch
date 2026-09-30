@@ -1,0 +1,6 @@
+interface:
+  display_name: "CYPT Slide Template"
+  short_description: "Restyle editable PT/CYPT PowerPoint decks"
+  default_prompt: "Use $cypt-slide-template to turn this PowerPoint into the CYPT slide style while preserving its scientific content."
+policy:
+  allow_implicit_invocation: false

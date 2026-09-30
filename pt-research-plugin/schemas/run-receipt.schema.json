@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pt-research.local/schemas/run-receipt.schema.json",
+  "title": "PT executed-command receipt",
+  "type": "object",
+  "required": ["timestamp", "operating_system", "architecture", "package_version", "solver_version", "package_revision", "exact_command", "input_file_hash", "generated_case_hash", "exit_status", "runtime_seconds", "output_hashes", "warnings", "errors", "validation_state"],
+  "properties": {
+    "timestamp": {"type": "string", "minLength": 1},
+    "operating_system": {"type": "string", "minLength": 1},
+    "architecture": {"type": "string", "minLength": 1},
+    "package_version": {"type": "string", "minLength": 1},
+    "solver_version": {"type": "string", "minLength": 1},
+    "package_revision": {"type": "string", "minLength": 1},
+    "exact_command": {"type": ["array", "string"]},
+    "input_file_hash": {"type": "string", "minLength": 1},
+    "generated_case_hash": {"type": "string", "minLength": 1},
+    "exit_status": {"type": "integer"},
+    "runtime_seconds": {"type": "number"},
+    "output_hashes": {"type": ["object", "array"]},
+    "warnings": {"type": "array"},
+    "errors": {"type": "array"},
+    "validation_state": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": true
+}

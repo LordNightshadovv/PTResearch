@@ -1,0 +1,13 @@
+{
+  "local_skill": "upstream-cfd-experiment",
+  "repository": "https://github.com/csml-rpi/AI-CFD-Scientist",
+  "commit": "b7fa924c834ccfd81c67788b7d6b2e3c9ff13514",
+  "source_path": "cfd-skills/cfd-experiment",
+  "license": "MIT (declared in README; no standalone license file)",
+  "retrieved_at": "2026-07-20",
+  "reuse_mode": "pt_bridge_with_preserved_snapshot",
+  "tree_hash": "44ea5547d9897c7297ad7a1a9b632b7ffa160beda1c570405ebcafef2a5759ef",
+  "file_hashes": {
+    "SKILL.md": "2eb54d3c36966d0fd00679a3935d042e18c15bd4cfc61439183ec1edeed4cd6a"
+  }
+}

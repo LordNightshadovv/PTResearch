@@ -1,0 +1,19 @@
+{
+  "name": "Singapore CYPT",
+  "source": "Team Singapore Magnetic Gear; graph takeaway accent from Team Slovakia Wet Scroll page 26",
+  "fonts": { "primary": "Arial" },
+  "colors": {
+    "bg": "#FCF3E0",
+    "ink": "#080808",
+    "muted": "#A8A49B",
+    "red": "#E3001B",
+    "yellow": "#FFC000",
+    "orange": "#F3A447",
+    "blue": "#579DCB",
+    "purple": "#7030A0",
+    "green": "#57C782",
+    "cyan": "#A5E8F1",
+    "olive": "#8AA77B",
+    "slovakGreen": "#73AD49"
+  }
+}

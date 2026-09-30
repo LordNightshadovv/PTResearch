@@ -1,0 +1,6 @@
+interface:
+  display_name: "PT OpenFOAM Environment Manager"
+  short_description: "Probe OpenFOAM and export Linux packages"
+  default_prompt: "Use $pt-openfoam-environment-manager through the PT orchestrator to check OpenFOAM and prepare a portable simulation package."
+policy:
+  allow_implicit_invocation: false

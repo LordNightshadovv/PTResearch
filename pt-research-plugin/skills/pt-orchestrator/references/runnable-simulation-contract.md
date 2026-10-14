@@ -61,3 +61,14 @@ comparison requires held-out measurements and uncertainty treatment.
 
 --allow-partial is inspection-only. Its output must say handoff-only and must never satisfy the
 runnable package contract.
+
+## Engineering standards (versioned, opt-in)
+
+Code-producing stages also follow `pt-research-software-engineering`. A case with
+`engineering_contract_version: 1` declares `engineering_standards.yaml`
+(`schemas/engineering-standards.schema.json`, gates in `scripts/engineering_contract.py`):
+`implementation_ready` or higher needs status `declared`; `executed_unverified` or higher needs a
+committed lockfile; `numerically_verified` needs an evidenced numerical-verification receipt;
+`experimentally_compared` needs an evidenced experiment-comparison receipt. The manifest proves
+declaration and file structure only. It does not run tests, prove numerical accuracy, or establish
+physical correctness, and it never raises a software-readiness claim by itself.

@@ -1,0 +1,13 @@
+.PHONY: sync lint format typecheck test check
+# `uv lock` creates uv.lock (needs network); commit it. `--frozen` then refuses silent drift.
+sync:
+	uv sync --extra dev
+lint:
+	ruff check .
+format:
+	ruff format .
+typecheck:
+	mypy
+test:
+	pytest
+check: lint typecheck test

@@ -8,6 +8,7 @@ from pathlib import Path
 
 from artifact_lib import basic_schema_errors, load_artifact, load_schema
 from calibration_contract import validate_calibration_contract
+from engineering_contract import validate_engineering_contract
 from runnable_contract import package_status
 from scientific_contract import validate_v2, validate_v3
 
@@ -78,6 +79,8 @@ def validate(case_dir: Path, require_complete: bool = True) -> list[str]:
         return errors + ["core artifacts must be objects"]
 
     errors.extend(validate_calibration_contract(case_dir, loaded))
+    # Opt-in versioned engineering-standards contract (declaration and structure only).
+    errors.extend(validate_engineering_contract(case_dir, loaded))
 
     exact = contract.get("exact_prompt")
     if not isinstance(exact, str) or not exact.strip():

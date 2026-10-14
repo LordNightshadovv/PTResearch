@@ -1,5 +1,7 @@
 # Third-Party Notices
 
+The MIT license in [LICENSE](LICENSE) covers only the files authored by the PT Research Team. Every component listed below, and any file inside an `upstream-original/` directory or `tools/foam-agent/`, remains under its own license as recorded here and in its own `LICENSE` file.
+
 This plugin contains preserved upstream snapshots and one vendored executable framework. PT bridge files are local adaptations; `upstream-original/` directories are unmodified snapshots whose hashes are recorded in `upstream-lock.yaml`.
 
 | Component | Copyright/project | Pinned commit | License evidence |

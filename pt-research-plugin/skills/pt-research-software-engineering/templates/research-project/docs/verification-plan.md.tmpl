@@ -1,0 +1,34 @@
+# Verification and validation plan
+
+Verification asks "did we solve the equations correctly?"; validation asks "are these the
+right equations for the experiment?". Keep them separate.
+
+## Verification
+
+| Check | Method | Acceptance criterion |
+|-------|--------|---------------------|
+| Analytic benchmark | compare with the closed form | max abs error < 1e-9 m at rtol 1e-11 |
+| Step-size convergence | RK4 refinement 20/40/80 steps | observed order within [3.7, 4.5] |
+| Tolerance study | rtol 1e-4 ... 1e-10 | error non-increasing, below 1e-9 at finest |
+| Conservation | undamped energy; damped monotonic energy | relative drift < 1e-8; no increase |
+| Limiting cases | c -> 0 gives cosine | max abs error < 1e-9 m |
+| Symmetry / scaling | reflection oddness; linear amplitude scaling | allclose at 1e-11 |
+| Dimensions | exponent registry and Pint | exact equality |
+
+Criteria are written before running and changed only through a recorded decision.
+
+## Validation (to complete with data)
+
+| Item | Plan |
+|------|------|
+| Observable and metric | define observable, units, and metric (e.g. reduced chi-squared) before fitting |
+| Data split | calibration data for fitting; separate held-out data for validation |
+| Uncertainty budget | separate measurement, calibration, numerical, sampling, and model-form terms |
+| Comparison | overlay with error bars, residuals, goodness of fit, regime map |
+| Falsifier | the result that would reject the model, stated in advance |
+
+## Receipts
+
+Retain command, output, timestamp, and commit for every verification run you cite
+(for example `receipts/pytest-YYYYMMDD.txt`). A check is "evidenced" only when its receipt
+exists.

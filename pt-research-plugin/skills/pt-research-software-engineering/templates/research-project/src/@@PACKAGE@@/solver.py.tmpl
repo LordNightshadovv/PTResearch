@@ -1,0 +1,59 @@
+"""Thin wrapper over ``scipy.integrate.solve_ivp`` with explicit failure handling."""
+
+from __future__ import annotations
+
+import logging
+from dataclasses import dataclass
+
+import numpy as np
+from scipy.integrate import solve_ivp
+
+from .errors import SolverError
+from .model import FloatArray, Model
+
+LOGGER = logging.getLogger(__name__)
+
+
+@dataclass(frozen=True)
+class Trajectory:
+    t_s: FloatArray
+    y: FloatArray  # shape (n_state, n_time)
+    n_function_evaluations: int
+    method: str
+    rtol: float
+    atol: float
+
+
+def simulate(
+    model: Model,
+    y0: FloatArray,
+    t_end_s: float,
+    t_eval_s: FloatArray,
+    *,
+    method: str = "DOP853",
+    rtol: float = 1e-9,
+    atol: float = 1e-12,
+) -> Trajectory:
+    """Integrate ``model`` on ``[0, t_end_s]`` and return samples at ``t_eval_s``."""
+    LOGGER.debug("solve_ivp method=%s rtol=%g atol=%g", method, rtol, atol)
+    solution = solve_ivp(
+        model.rhs,
+        (0.0, t_end_s),
+        y0,
+        method=method,
+        t_eval=t_eval_s,
+        rtol=rtol,
+        atol=atol,
+    )
+    if not solution.success:
+        raise SolverError(f"integration failed: {solution.message}")
+    if not np.all(np.isfinite(solution.y)):
+        raise SolverError("integration produced non-finite values")
+    return Trajectory(
+        t_s=np.asarray(solution.t, dtype=np.float64),
+        y=np.asarray(solution.y, dtype=np.float64),
+        n_function_evaluations=int(solution.nfev),
+        method=method,
+        rtol=rtol,
+        atol=atol,
+    )

@@ -1,0 +1,67 @@
+"""Physical model abstraction and the reference damped harmonic oscillator.
+
+Design note: an abstract ``Model`` (right-hand side + optional invariant) is used because
+several models and solvers must be interchangeable behind one experiment interface.
+Everything else in the package is plain functions over data.
+
+Assumptions are listed in README.md (section "Assumptions and validity range"); SI units.
+"""
+
+from __future__ import annotations
+
+import math
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+
+import numpy as np
+from numpy.typing import NDArray
+
+FloatArray = NDArray[np.float64]
+
+
+class Model(ABC):
+    """First-order system ``dy/dt = f(t, y)`` with an optional conserved/dissipated quantity."""
+
+    @abstractmethod
+    def rhs(self, t: float, y: FloatArray) -> FloatArray:
+        """Right-hand side of the ODE system."""
+
+    @abstractmethod
+    def energy(self, y: FloatArray) -> float:
+        """Mechanical energy [J] for a single state vector ``y``."""
+
+
+@dataclass(frozen=True)
+class DampedOscillator(Model):
+    """m x'' + c x' + k x = 0 with state ``y = [x, v]`` (x [m], v [m/s])."""
+
+    mass_kg: float
+    stiffness_n_per_m: float
+    damping_kg_per_s: float
+
+    def __post_init__(self) -> None:
+        for name in ("mass_kg", "stiffness_n_per_m"):
+            value = getattr(self, name)
+            if not math.isfinite(value) or value <= 0.0:
+                raise ValueError(f"{name} must be positive and finite")
+        if not math.isfinite(self.damping_kg_per_s) or self.damping_kg_per_s < 0.0:
+            raise ValueError("damping_kg_per_s must be non-negative and finite")
+
+    @property
+    def omega0_rad_per_s(self) -> float:
+        """Undamped angular frequency sqrt(k/m)."""
+        return math.sqrt(self.stiffness_n_per_m / self.mass_kg)
+
+    @property
+    def damping_ratio(self) -> float:
+        """Dimensionless zeta = c / (2 sqrt(k m))."""
+        return self.damping_kg_per_s / (2.0 * math.sqrt(self.stiffness_n_per_m * self.mass_kg))
+
+    def rhs(self, t: float, y: FloatArray) -> FloatArray:
+        position, velocity = y
+        acceleration = -(self.stiffness_n_per_m * position + self.damping_kg_per_s * velocity)
+        return np.array([velocity, acceleration / self.mass_kg], dtype=np.float64)
+
+    def energy(self, y: FloatArray) -> float:
+        position, velocity = float(y[0]), float(y[1])
+        return 0.5 * self.mass_kg * velocity**2 + 0.5 * self.stiffness_n_per_m * position**2

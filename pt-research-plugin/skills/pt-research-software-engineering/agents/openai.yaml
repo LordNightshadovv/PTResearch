@@ -1,0 +1,6 @@
+interface:
+  display_name: "PT Research Software Engineering"
+  short_description: "Industrial-grade standards for PT research code"
+  default_prompt: "Use $pt-research-software-engineering through the PT orchestrator to plan, scaffold, and verify the code for this PT research case."
+policy:
+  allow_implicit_invocation: false

@@ -35,6 +35,17 @@ Solver` in `selection_chain`. Each governing equation ID must resolve to the the
 each numerical requirement must follow from those equations, regimes, geometry, or requested
 observables.
 
+## Engineering and stack decision
+
+The route fixes the physics; the implementation stack is decided separately and recorded.
+With the route, hand `pt-orchestrator` the inputs that `pt-research-software-engineering` needs:
+language and library candidates chosen on technical suitability and reproducibility (established
+libraries such as NumPy/SciPy, SymPy, Pint, and the locked solver's own tooling before any custom
+numerics), the numerical-verification benchmarks already listed in `solver_requirements.yaml`, the
+uncertainty sources, and whether an interface beyond a CLI would improve usability. A stack choice
+never changes the selected primary solver or physical model, and a custom reimplementation of
+solver physics needs a recorded exception. The ADR must list at least two alternatives.
+
 ## Require inputs
 
 Require `problem_contract.yaml`, `essence_and_chain.yaml`, `model_registry.yaml` with one selected model, governing equations/assumptions, geometry/parameter ranges, observables, and validation targets. Refuse routing when these conflict or cannot predict the prompt observable.
@@ -94,4 +105,5 @@ convergence method, failure signatures, and limitation boundaries. Do not invent
 solver names. Before handing the route to the packager, state `scientific_readiness: model_closed`
 and make the software target `handoff_only` until a real implementation and synthetic receipt exist.
 
-Return to `pt-orchestrator`. Do not install software, generate a project, or execute a case. Include the exact locked solver version from `tools/solver-runtime/solver-locks.json`; version selection is not deferred to an installer or package recipient.
+Return to `pt-orchestrator`, naming `pt-research-software-engineering` as the required next
+specialist for any code the route implies. Do not install software, generate a project, or execute a case. Include the exact locked solver version from `tools/solver-runtime/solver-locks.json`; version selection is not deferred to an installer or package recipient.

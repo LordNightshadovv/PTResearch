@@ -1,6 +1,6 @@
 # Third-party skill review for CYPT slides
 
-Codex Security scan `5a8a5b2c-627d-49f0-b86b-18c685518e8d` reviewed the downloaded source on 2026-09-29 before active installation or execution. It was a static review; bundled font binaries were inventoried but not parser-audited. The sealed report is at `~/.codex/state/plugins/codex-security/scans/cypt-skill-quarantine/unversioned_20260928T164039Z_qc20e_sj/report.md`.
+Codex Security scan `5a8a5b2c-627d-49f0-b86b-18c685518e8d` reviewed the downloaded source on 2026-09-29 before active installation or execution. It was a static review; bundled font binaries were inventoried but not parser-audited. The sealed report is at `$CODEX_HOME/state/plugins/codex-security/scans/cypt-skill-quarantine/<scan-id>/report.md`, a local file that is not distributed with the plugin.
 
 | Skill | CYPT workflow decision | Source-backed result |
 | --- | --- | --- |

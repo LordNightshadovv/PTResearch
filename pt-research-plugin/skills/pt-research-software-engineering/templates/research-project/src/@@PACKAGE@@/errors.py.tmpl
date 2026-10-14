@@ -1,0 +1,15 @@
+"""Exception hierarchy. Callers catch ``ResearchError``; the CLI maps subclasses to exit codes."""
+
+from __future__ import annotations
+
+
+class ResearchError(Exception):
+    """Base class for all expected, user-actionable failures."""
+
+
+class ConfigError(ResearchError):
+    """The configuration file is missing, malformed, or physically invalid."""
+
+
+class SolverError(ResearchError):
+    """The numerical integration failed or produced non-finite values."""

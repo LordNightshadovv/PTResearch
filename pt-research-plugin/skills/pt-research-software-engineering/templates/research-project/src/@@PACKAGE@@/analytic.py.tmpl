@@ -1,0 +1,28 @@
+"""Closed-form reference solutions used as verification benchmarks."""
+
+from __future__ import annotations
+
+import math
+
+import numpy as np
+
+from .model import DampedOscillator, FloatArray
+
+
+def underdamped_position(
+    model: DampedOscillator, position_m: float, velocity_m_per_s: float, t_s: FloatArray
+) -> FloatArray:
+    """Exact x(t) for 0 <= zeta < 1.
+
+    x(t) = exp(-zeta w0 t) [x0 cos(wd t) + (v0 + zeta w0 x0)/wd sin(wd t)],
+    wd = w0 sqrt(1 - zeta^2).
+    """
+    zeta = model.damping_ratio
+    if zeta >= 1.0:
+        raise ValueError("underdamped_position requires damping_ratio < 1")
+    w0 = model.omega0_rad_per_s
+    wd = w0 * math.sqrt(1.0 - zeta**2)
+    envelope = np.exp(-zeta * w0 * t_s)
+    coefficient = (velocity_m_per_s + zeta * w0 * position_m) / wd
+    result: FloatArray = envelope * (position_m * np.cos(wd * t_s) + coefficient * np.sin(wd * t_s))
+    return result

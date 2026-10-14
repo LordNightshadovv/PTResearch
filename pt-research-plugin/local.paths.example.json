@@ -1,0 +1,10 @@
+{
+  "_comment": "Copy to <PT_RESEARCH_HOME>/local.paths.json (default ~/.config/pt-research/local.paths.json; this survives plugin updates). A git-ignored local.paths.json in the plugin directory also works but is lost when a marketplace-installed plugin is updated. Lookup order per key: environment variable, <PT_RESEARCH_HOME>/local.paths.json, <plugin>/local.paths.json, <plugin>/.env.local, default. PT_RESEARCH_HOME itself is read from the environment only. Every key is optional; omit a key to use the default or skip the dependent feature.",
+  "PT_BUNDLED_PYTHON": "/path/to/python3 with reportlab/pypdf (optional; enables PDF-rendering tests)",
+  "PT_WORKSPACE_ROOT": "/path/to/workspace containing deliverables/ and tmp/ (default: current directory)",
+  "PRESENTATIONS_SKILL": "/path/to/presentations/skills/presentations (slide builder helper scripts)",
+  "RUNTIME_PYTHON": "/path/to/python3 used by the slide builder's package validators",
+  "RUNTIME_NODE": "/path/to/node used to run scripts/build_template.mjs",
+  "RUNTIME_NODE_MODULES": "/path/to/node_modules containing @oai/artifact-tool",
+  "PT_LOCAL_REFERENCES_DIR": "/path/to/folder holding the private CYPT reference decks (optional; default <PT_RESEARCH_HOME>/local-references, restored with scripts/fetch_local_references.py)"
+}

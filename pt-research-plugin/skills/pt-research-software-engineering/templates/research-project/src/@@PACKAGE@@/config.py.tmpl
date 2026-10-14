@@ -1,0 +1,130 @@
+"""Typed configuration loaded from TOML. Validation happens once, at the boundary."""
+
+from __future__ import annotations
+
+import math
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
+
+try:  # Python 3.11+
+    import tomllib
+except ModuleNotFoundError:  # pragma: no cover - exercised on Python 3.10 only
+    import tomli as tomllib  # type: ignore[no-redef]
+
+from .errors import ConfigError
+
+ALLOWED_METHODS = frozenset({"RK45", "DOP853", "Radau", "BDF", "LSODA"})
+
+
+@dataclass(frozen=True)
+class ModelConfig:
+    mass_kg: float
+    stiffness_n_per_m: float
+    damping_kg_per_s: float
+
+
+@dataclass(frozen=True)
+class InitialState:
+    position_m: float
+    velocity_m_per_s: float
+
+
+@dataclass(frozen=True)
+class SolverConfig:
+    method: str
+    rtol: float
+    atol: float
+    t_end_s: float
+    n_samples: int
+
+
+@dataclass(frozen=True)
+class RunSettings:
+    seed: int
+    output_dir: str
+    log_level: str
+
+
+@dataclass(frozen=True)
+class RunConfig:
+    model: ModelConfig
+    initial_state: InitialState
+    solver: SolverConfig
+    run: RunSettings
+
+
+def _section(raw: dict[str, Any], name: str) -> dict[str, Any]:
+    value = raw.get(name)
+    if not isinstance(value, dict):
+        raise ConfigError(f"missing [{name}] table")
+    return value
+
+
+def _number(table: dict[str, Any], key: str, *, positive: bool = False) -> float:
+    value = table.get(key)
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ConfigError(f"{key} must be a number")
+    number = float(value)
+    if not math.isfinite(number):
+        raise ConfigError(f"{key} must be finite")
+    if positive and number <= 0.0:
+        raise ConfigError(f"{key} must be positive")
+    return number
+
+
+def parse_config(raw: dict[str, Any]) -> RunConfig:
+    """Validate a parsed TOML mapping and return an immutable ``RunConfig``."""
+    model = _section(raw, "model")
+    initial = _section(raw, "initial_state")
+    solver = _section(raw, "solver")
+    run = _section(raw, "run")
+    method = solver.get("method")
+    if method not in ALLOWED_METHODS:
+        raise ConfigError(f"solver.method must be one of {sorted(ALLOWED_METHODS)}")
+    n_samples = solver.get("n_samples")
+    if isinstance(n_samples, bool) or not isinstance(n_samples, int) or n_samples < 2:
+        raise ConfigError("solver.n_samples must be an integer >= 2")
+    seed = run.get("seed")
+    if isinstance(seed, bool) or not isinstance(seed, int) or seed < 0:
+        raise ConfigError("run.seed must be a non-negative integer")
+    output_dir = run.get("output_dir")
+    log_level = run.get("log_level", "INFO")
+    if not isinstance(output_dir, str) or not output_dir:
+        raise ConfigError("run.output_dir must be a non-empty string")
+    if log_level not in {"DEBUG", "INFO", "WARNING", "ERROR"}:
+        raise ConfigError("run.log_level must be DEBUG, INFO, WARNING, or ERROR")
+    damping = _number(model, "damping_kg_per_s")
+    if damping < 0.0:
+        raise ConfigError("damping_kg_per_s must be non-negative")
+    return RunConfig(
+        model=ModelConfig(
+            mass_kg=_number(model, "mass_kg", positive=True),
+            stiffness_n_per_m=_number(model, "stiffness_n_per_m", positive=True),
+            damping_kg_per_s=damping,
+        ),
+        initial_state=InitialState(
+            position_m=_number(initial, "position_m"),
+            velocity_m_per_s=_number(initial, "velocity_m_per_s"),
+        ),
+        solver=SolverConfig(
+            method=str(method),
+            rtol=_number(solver, "rtol", positive=True),
+            atol=_number(solver, "atol", positive=True),
+            t_end_s=_number(solver, "t_end_s", positive=True),
+            n_samples=n_samples,
+        ),
+        run=RunSettings(seed=seed, output_dir=output_dir, log_level=str(log_level)),
+    )
+
+
+def load_config(path: Path) -> RunConfig:
+    """Read and validate a TOML configuration file."""
+    try:
+        with path.open("rb") as handle:
+            raw = tomllib.load(handle)
+    except FileNotFoundError as exc:
+        raise ConfigError(f"configuration file not found: {path}") from exc
+    except tomllib.TOMLDecodeError as exc:
+        raise ConfigError(f"invalid TOML in {path}: {exc}") from exc
+    return parse_config(raw)

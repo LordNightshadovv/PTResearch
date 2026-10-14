@@ -31,13 +31,13 @@ RESULT
 PASS - 17 existing reports; archive was inspected but not regenerated or repaired
 
 COMMAND
-/private/tmp/pt-plugin-validate-venv/bin/python ~/.codex/skills/.system/skill-creator/scripts/quick_validate.py <changed-skill>
+/private/tmp/pt-plugin-validate-venv/bin/python $CODEX_HOME/skills/.system/skill-creator/scripts/quick_validate.py <changed-skill>
 RESULT
 PASS - pt-orchestrator, pt-theoretical-research, pt-simulation-router,
 pt-simulation-packager, and pt-report-renderer
 
 COMMAND
-/private/tmp/pt-plugin-validate-venv/bin/python ~/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py pt-research-plugin
+/private/tmp/pt-plugin-validate-venv/bin/python $CODEX_HOME/skills/.system/plugin-creator/scripts/validate_plugin.py pt-research-plugin
 RESULT
 PASS - official plugin validator
 

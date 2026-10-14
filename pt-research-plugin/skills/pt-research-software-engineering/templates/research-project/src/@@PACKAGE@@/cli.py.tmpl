@@ -1,0 +1,50 @@
+"""Command-line interface: a thin caller of the headless core."""
+
+from __future__ import annotations
+
+import argparse
+import logging
+import sys
+from collections.abc import Sequence
+from pathlib import Path
+
+from . import __version__
+from .config import load_config
+from .errors import ConfigError, SolverError
+from .experiment import run_simulation, write_outputs
+from .logging_setup import configure_logging
+
+LOGGER = logging.getLogger(__name__)
+EXIT_OK, EXIT_SOLVER, EXIT_CONFIG = 0, 1, 2
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog="@@PROJECT_NAME@@", description=__doc__)
+    parser.add_argument("--version", action="version", version=__version__)
+    sub = parser.add_subparsers(dest="command", required=True)
+    run = sub.add_parser("run", help="run the configured simulation")
+    run.add_argument("--config", type=Path, default=Path("config/default.toml"))
+    run.add_argument("--output-dir", type=Path, default=None)
+    return parser
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+    try:
+        config = load_config(args.config)
+        configure_logging(config.run.log_level)
+        summary = run_simulation(config)
+        write_outputs(
+            summary, config, args.output_dir or Path(config.run.output_dir), config_path=args.config
+        )
+    except ConfigError as exc:
+        print(f"configuration error: {exc}", file=sys.stderr)
+        return EXIT_CONFIG
+    except SolverError as exc:
+        print(f"solver error: {exc}", file=sys.stderr)
+        return EXIT_SOLVER
+    return EXIT_OK
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

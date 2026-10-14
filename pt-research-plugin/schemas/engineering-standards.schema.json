@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pt-research.local/schemas/engineering-standards.schema.json",
+  "title": "PT research-software engineering standards manifest",
+  "description": "Declares the stack decision, test plan, numerical verification, uncertainty treatment, reproducibility metadata, and interface choice of research code. Validation proves that the declaration is complete and internally consistent and that referenced files exist; it never proves scientific correctness, numerical accuracy, or that any test passes.",
+  "type": "object",
+  "required": ["engineering_contract_version", "status", "validation_scope", "claim_ceiling"],
+  "properties": {
+    "engineering_contract_version": {"type": "integer", "enum": [1]},
+    "status": {"type": "string", "enum": ["not_started", "declared", "not_applicable"]},
+    "validation_scope": {"type": "string", "enum": ["declaration_and_structure_only"]},
+    "claim_ceiling": {"type": "string", "minLength": 1},
+    "not_applicable_justification": {"type": "string"},
+    "project": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string"},
+        "root": {"type": "string"},
+        "version": {"type": "string"},
+        "versioning": {"type": "string", "enum": ["semantic"]},
+        "changelog": {"type": "string"},
+        "requires_python": {"type": "string"},
+        "design_notes": {"type": "string"}
+      }
+    },
+    "stack_decision": {
+      "type": "object",
+      "properties": {
+        "adr_path": {"type": "string"},
+        "language": {"type": "object", "properties": {"name": {"type": "string"}, "justification": {"type": "string"}}},
+        "paradigm": {"type": "object", "properties": {"style": {"type": "string", "enum": ["oop", "functional", "procedural", "mixed"]}, "justification": {"type": "string"}}},
+        "selected": {"type": "array", "items": {"type": "object", "properties": {"name": {"type": "string"}, "role": {"type": "string"}, "rationale": {"type": "string"}}}},
+        "alternatives_considered": {"type": "array", "items": {"type": "object", "properties": {"name": {"type": "string"}, "rejected_because": {"type": "string"}}}},
+        "reinvention_exceptions": {"type": "array", "items": {"type": "object", "properties": {"capability": {"type": "string"}, "why_not_library": {"type": "string"}}}}
+      }
+    },
+    "interface": {
+      "type": "object",
+      "properties": {
+        "primary": {"type": "string", "enum": ["library_only", "cli", "desktop_gui", "web_ui", "tui_python", "tui_rust", "notebook"]},
+        "justification": {"type": "string"},
+        "headless_core": {"type": "boolean"},
+        "thin_layer": {"type": "boolean"},
+        "gui_layer_path": {"type": "string"},
+        "usability_rationale": {"type": "string"},
+        "implementation_language": {"type": "string"},
+        "rust_rationale": {"type": "string"},
+        "accessibility": {
+          "type": "object",
+          "properties": {
+            "keyboard_operable": {"type": "boolean"},
+            "non_color_encoding": {"type": "boolean"},
+            "text_alternatives": {"type": "boolean"},
+            "scalable_text_or_contrast": {"type": "boolean"},
+            "notes": {"type": "string"},
+            "limitations": {"type": "string"}
+          }
+        }
+      }
+    },
+    "quality_tooling": {
+      "type": "object",
+      "properties": {
+        "linter": {"type": "string"},
+        "formatter": {"type": "string"},
+        "type_checker": {"type": "string"},
+        "test_runner": {"type": "string"},
+        "ci_config_path": {"type": "string"},
+        "commands": {"type": "object"}
+      }
+    },
+    "dependency_management": {
+      "type": "object",
+      "properties": {
+        "tool": {"type": "string"},
+        "manifest_path": {"type": "string"},
+        "lockfile": {"type": "string"},
+        "lockfile_status": {"type": "string", "enum": ["committed", "pending_generation"]},
+        "pinning_policy": {"type": "string"}
+      }
+    },
+    "configuration": {
+      "type": "object",
+      "properties": {
+        "config_path": {"type": "string"},
+        "separated_from_code": {"type": "boolean"},
+        "validation": {"type": "string"}
+      }
+    },
+    "logging_and_error_handling": {
+      "type": "object",
+      "properties": {"logging": {"type": "string"}, "error_handling": {"type": "string"}}
+    },
+    "test_plan": {
+      "type": "object",
+      "properties": {
+        "tests": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "kind", "path", "evidence_status"],
+            "properties": {
+              "id": {"type": "string", "minLength": 1},
+              "kind": {"type": "string", "enum": ["unit", "dimensional", "convergence", "conservation", "limiting_case", "symmetry", "analytic_benchmark", "property", "regression", "integration", "architecture", "gui_headless", "uncertainty", "reproducibility"]},
+              "path": {"type": "string", "minLength": 1},
+              "evidence_status": {"type": "string", "enum": ["planned", "implemented", "evidenced"]},
+              "evidence": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "numerical_verification": {
+      "type": "object",
+      "properties": {
+        "required": {"type": "boolean"},
+        "methods": {"type": "array", "items": {"type": "string", "enum": ["step_size_convergence", "tolerance_study", "mesh_convergence", "conservation_check", "analytic_benchmark", "method_of_manufactured_solutions", "cross_solver_check"]}},
+        "tolerances": {"type": "object"},
+        "convergence_criterion": {"type": "string"},
+        "justification_if_not_required": {"type": "string"},
+        "evidence_status": {"type": "string", "enum": ["planned", "implemented", "evidenced"]},
+        "evidence": {"type": "string"}
+      }
+    },
+    "physical_correctness": {
+      "type": "object",
+      "properties": {
+        "units_policy": {"type": "string", "enum": ["pint", "manual_dimension_vectors", "nondimensionalized_with_documented_scales", "none_with_justification"]},
+        "units_justification": {"type": "string"},
+        "dimensional_analysis": {"type": "string"},
+        "limiting_cases": {"type": "array", "items": {"type": "string"}},
+        "symmetry_checks": {"type": "array", "items": {"type": "string"}},
+        "symmetry_justification": {"type": "string"},
+        "analytic_benchmarks": {"type": "array", "items": {"type": "string"}},
+        "no_benchmark_justification": {"type": "string"},
+        "assumptions_registry": {"type": "string"}
+      }
+    },
+    "uncertainty_treatment": {
+      "type": "object",
+      "properties": {
+        "methods": {"type": "array", "items": {"type": "string", "enum": ["error_propagation", "monte_carlo", "fit_covariance", "residual_analysis", "sensitivity_analysis", "parameter_sweep", "bootstrap", "none_with_justification"]}},
+        "error_sources": {"type": "object"},
+        "justification": {"type": "string"}
+      }
+    },
+    "experiment_comparison": {
+      "type": "object",
+      "properties": {
+        "planned": {"type": "boolean"},
+        "metrics": {"type": "array", "items": {"type": "string"}},
+        "overlay_with_error_bars": {"type": "boolean"},
+        "regime_map": {"type": "boolean"},
+        "fit_validation_separation": {"type": "string"},
+        "justification_if_not_planned": {"type": "string"},
+        "evidence_status": {"type": "string", "enum": ["planned", "implemented", "evidenced"]},
+        "evidence": {"type": "string"}
+      }
+    },
+    "reproducibility": {
+      "type": "object",
+      "properties": {
+        "seed_policy": {"type": "string"},
+        "deterministic_outputs": {"type": "boolean"},
+        "run_metadata_writer": {"type": "string"},
+        "run_metadata_fields": {"type": "array", "items": {"type": "string"}},
+        "environment_lock": {"type": "string"}
+      }
+    },
+    "documentation": {
+      "type": "object",
+      "properties": {
+        "readme": {"type": "string"},
+        "assumptions_section": {"type": "boolean"},
+        "verification_plan": {"type": "string"}
+      }
+    }
+  },
+  "additionalProperties": true
+}

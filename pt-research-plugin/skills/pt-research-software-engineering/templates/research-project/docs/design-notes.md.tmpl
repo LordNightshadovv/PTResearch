@@ -1,0 +1,33 @@
+# Requirements and design notes
+
+## Requirements
+
+- R1. Simulate the configured model and report derived quantities with units.
+- R2. Every numerical result is reproducible from config, seed, and the locked environment.
+- R3. Numerical accuracy is demonstrated by convergence and conservation checks.
+- R4. Physical correctness is protected by dimensional, limiting-case, symmetry, and
+  analytic-benchmark tests.
+- R5. Results can be compared with experiment using stated uncertainties and metrics.
+
+## Architecture
+
+```text
+config (TOML) -> config.py (validated dataclasses)
+                      |
+        experiment.run_simulation -> model.Model + solver.simulate -> Trajectory
+                      |                              |
+         provenance (metadata)        analytic / uncertainty / comparison / plotting
+                      |
+      cli.py (and optional gui/controller.py) call only the public core functions
+```
+
+## Model-form and numerical decisions
+
+Record each modelling choice (equation, closure, parameter source) and numerical choice
+(method, tolerances, step policy) with the reason and the test that guards it.
+
+## Error handling and logging
+
+Expected failures raise `ResearchError` subclasses; the CLI maps them to exit codes.
+Library code logs through `logging.getLogger(__name__)`; only the entry point configures
+handlers. No bare `except`, no silent fallbacks.

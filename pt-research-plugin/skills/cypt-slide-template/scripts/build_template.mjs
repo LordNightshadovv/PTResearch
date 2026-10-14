@@ -1,13 +1,21 @@
 import fs from "node:fs/promises";
+import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { setting as localSetting, localReferencesDir, researchHome } from "./local_paths.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const SKILL_ROOT = path.resolve(HERE, "..");
-const REPO = path.resolve(process.env.PT_WORKSPACE_ROOT ?? process.cwd());
-const PRESENTATIONS_SKILL = process.env.PRESENTATIONS_SKILL ?? "~/.codex/plugins/cache/openai-primary-runtime/presentations/26.915.20218/skills/presentations";
-const RUNTIME_PYTHON = process.env.RUNTIME_PYTHON ?? "~/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3";
-const NODE_MODULES = process.env.RUNTIME_NODE_MODULES ?? "~/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules";
+const PLUGIN_ROOT = path.resolve(SKILL_ROOT, "../..");
+// Machine-specific locations resolve exactly like scripts/local_paths.py (see local_paths.mjs): environment variable,
+// then <PT_RESEARCH_HOME>/local.paths.json (default ~/.config/pt-research; survives plugin updates), then the git-ignored
+// <plugin-root>/local.paths.json, then <plugin-root>/.env.local. No personal default path is embedded in this script.
+const setting = (key) => localSetting(key, { pluginRoot: PLUGIN_ROOT });
+const requireSetting = (key, what) => { const v = setting(key); if (!v) throw new Error(`${key} is not set: ${what}. Export ${key} or add it to ${path.join(researchHome(), "local.paths.json")} (see local.paths.example.json).`); return v; };
+const REPO = path.resolve(setting("PT_WORKSPACE_ROOT") ?? process.cwd());
+const PRESENTATIONS_SKILL = requireSetting("PRESENTATIONS_SKILL", "path to the Presentations skill directory that provides container_tools/");
+const RUNTIME_PYTHON = requireSetting("RUNTIME_PYTHON", "path to a Python interpreter for the package validators");
+const NODE_MODULES = requireSetting("RUNTIME_NODE_MODULES", "path to the node_modules directory that provides @oai/artifact-tool");
 process.env.RUNTIME_NODE_MODULES = NODE_MODULES;
 const { Presentation, PresentationFile } = await import(pathToFileURL(path.join(NODE_MODULES,"@oai/artifact-tool/dist/artifact_tool.mjs")).href);
 const { applyPresentationChartFont } = await import(pathToFileURL(path.join(PRESENTATIONS_SKILL,"container_tools/artifact_tool_utils.mjs")).href);
@@ -15,14 +23,21 @@ const configPath = path.resolve(process.argv[2] ?? path.join(SKILL_ROOT, "assets
 const outputPath = path.resolve(process.argv[3] ?? path.join(REPO, "deliverables/cypt-slide-template/CYPT_editable_template.pptx"));
 const cfg = JSON.parse(await fs.readFile(configPath, "utf8"));
 if (!Array.isArray(cfg.sections) || cfg.sections.length < 1 || cfg.sections.length > 8) throw new Error("sections must contain 1-8 entries");
-const themePath = path.resolve(path.dirname(configPath), cfg.themeFile ?? "singapore-cypt-theme.json");
+const themePath = path.resolve(path.dirname(configPath), cfg.themeFile ?? "cypt-theme.json");
 const theme = JSON.parse(await fs.readFile(themePath, "utf8"));
-const requiredColors = ["bg","ink","muted","red","yellow","orange","blue","purple","green","cyan","olive","slovakGreen"];
+const requiredColors = ["bg","ink","muted","red","yellow","orange","blue","purple","green","cyan","olive","conclusionGreen"];
 for (const key of requiredColors) if (!/^#[0-9a-fA-F]{6}$/.test(theme.colors?.[key] ?? "")) throw new Error(`invalid theme color: ${key}`);
 if (!theme.fonts?.primary) throw new Error("theme primary font is required");
 const C = theme.colors;
 const F = theme.fonts.primary;
-const SOURCE_IMAGES = path.join(SKILL_ROOT,"assets/source-images");
+// Optional private reference photos live in <PT_RESEARCH_HOME>/local-references/source-images (default
+// ~/.config/pt-research/...; PT_LOCAL_REFERENCES_DIR overrides; the git-ignored in-plugin assets/local-references
+// folder is the last fallback). Restore them with scripts/fetch_local_references.py. When no folder is found (or
+// PT_NO_LOCAL_REFERENCES=1) every photo becomes a labelled, replaceable placeholder, so the public build needs no third-party images.
+const USE_LOCAL_IMAGES = process.env.PT_NO_LOCAL_REFERENCES !== "1";
+const LOCAL_REFERENCES = USE_LOCAL_IMAGES ? localReferencesDir({ pluginRoot: PLUGIN_ROOT }) : undefined;
+const SOURCE_IMAGES = LOCAL_REFERENCES ? path.join(LOCAL_REFERENCES, "source-images") : undefined;
+console.log(LOCAL_REFERENCES ? `local references: ${LOCAL_REFERENCES}` : "local references: none (photos are placeholders)");
 const P = Presentation.create({ slideSize:{ width:960, height:720 } });
 const noLine = { fill:"none", width:0 };
 const pos = (x,y,w,h)=>({left:x,top:y,width:w,height:h});
@@ -45,7 +60,15 @@ function slide(title,section=null,{n=true,foot=true}={}){const s=P.slides.add();
 function notes(s,t){s.speakerNotes.textFrame.setText(t)}
 function prompt(s,x,y,w,h,size){const emphasis=/(identical fidget spinners|neodymium magnets|side by side on a plane|remaining ones start to rotate)/g;const strong=/^(identical fidget spinners|neodymium magnets|side by side on a plane|remaining ones start to rotate)$/;const parts=cfg.problemStatement.split(emphasis).filter(Boolean);return text(s,parts.map(p=>({run:p,textStyle:{italic:true,bold:strong.test(p)}})),x,y,w,h,size,{italic:true})}
 function label(s,t,x,y,w,h,fill=C.yellow,stroke=C.ink,size=15){rect(s,x,y,w,h,fill,stroke,1);text(s,t,x+4,y+1,w-8,h-2,size,{bold:true,italic:true,align:"center"})}
-async function photo(s,name,x,y,w,h,alt,rotation=0){const im=s.images.add({blob:new Uint8Array(await fs.readFile(path.join(SOURCE_IMAGES,name))),contentType:"image/png",alt,fit:"contain",position:pos(x,y,w,h)});im.rotation=rotation;return im}
+async function photo(s,name,x,y,w,h,alt,rotation=0,box=null){
+ // Prefer the extracted PNG; fall back to the raw JPEG when the PNG conversion (Pillow) was unavailable.
+ const candidates=[[name,"image/png"],[name.replace(/\.png$/,".jpg"),"image/jpeg"]].map(([n,t])=>[SOURCE_IMAGES&&path.join(SOURCE_IMAGES,n),t]);
+ const found=candidates.find(([f])=>f&&existsSync(f));
+ if(found){const im=s.images.add({blob:new Uint8Array(await fs.readFile(found[0])),contentType:found[1],alt,fit:"contain",position:pos(x,y,w,h)});im.rotation=rotation;return im}
+ const [bx,by,bw,bh]=box??[x,y,w,h];
+ rect(s,bx,by,bw,bh,"#ECEAE4",C.olive,2);
+ return text(s,"Insert apparatus photo\n(replace this placeholder)",bx+8,by+bh/2-30,bw-16,60,Math.min(18,bw/9),{italic:true,align:"center",color:"#555555"});
+}
 function dot(s,x,y,color=C.red,r=13){circle(s,x,y,r,color)}
 function dash(s,x1,y1,x2,y2,color=C.olive){for(let i=0;i<9;i+=2){const a=i/9,b=Math.min(1,(i+1)/9);line(s,x1+(x2-x1)*a,y1+(y2-y1)*a,x1+(x2-x1)*b,y1+(y2-y1)*b,color,2)}}
 function plotLine(s,x,y,w,h,values,color=C.red){line(s,x,y+h,x+w,y+h,C.ink,1);line(s,x,y,x,y+h,C.ink,1);for(let i=0;i<values.length-1;i++)line(s,x+i*w/(values.length-1),y+h-values[i]*h,x+(i+1)*w/(values.length-1),y+h-values[i+1]*h,color,2.5)}
@@ -60,17 +83,17 @@ function sampleChart(s,{x=91,y=171,w=780,h=429,banner=false}={}){
  chart.title="";
  applyPresentationChartFont(chart,{fontFamily:F});
  text(s,"ILLUSTRATIVE DATA — replace values, labels and units",95,602,700,24,13,{italic:true,color:"#555555"});
- if(banner){rect(s,0,331,960,112,`${C.slovakGreen}/88`);text(s,"State the supported conclusion here",65,351,830,73,39,{bold:true,color:"#FFFFFF",align:"center"});}
+ if(banner){rect(s,0,331,960,112,`${C.conclusionGreen}/88`);text(s,"State the supported conclusion here",65,351,830,73,39,{bold:true,color:"#FFFFFF",align:"center"});}
  return chart;
 }
 
-// 1 Cover — Singapore's restrained cover composition.
+// 1 Cover — restrained cover composition.
 {
  const s=slide("",null,{foot:false});
  text(s,cfg.problemTitle,188,127,690,76,55);text(s,cfg.teamLine,190,207,650,41,29);
  rect(s,74,276,810,10,C.ink);text(s,cfg.problemStatement,75,315,425,255,27,{italic:true});
  spinner(s,648,425,76);spinner(s,810,425,76);rect(s,74,641,810,10,C.ink);
- notes(s,"Editable cover. Replace title, presenter, event label and prompt. Source composition: Team Singapore Magnetic Gear PDF, page 1.");
+ notes(s,"Editable cover. Replace title, presenter, event label and prompt. Layout: restrained cover composition.");
 }
 // 2 Problem statement — concise prompt and parameter callouts.
 {
@@ -78,7 +101,7 @@ function sampleChart(s,{x=91,y=171,w=780,h=429,banner=false}={}){
  label(s,"Parameters",58,278,145,33);spinner(s,353,424,58);spinner(s,579,424,58);line(s,421,424,511,424,C.olive,2);
  label(s,"Spinner parameters",670,303,228,31,C.bg,C.orange,15);text(s,"• Number of arms\n• Magnet arrangement",687,339,206,84,17,{italic:true});
  label(s,"Magnet parameters",670,443,228,31,C.bg,C.blue,15);text(s,"• Orientation\n• Magnetization",687,480,206,84,17,{italic:true});
- notes(s,"Source prompt and layout based on Team Singapore PDF, pages 2–3. Prompt wording is retained as reference content.");
+ notes(s,"Problem statement layout with parameter callouts. Replace the prompt wording with the problem actually being presented.");
 }
 // 3 The requested colored parameter inventory, rebuilt as editable shapes.
 {
@@ -95,7 +118,7 @@ function sampleChart(s,{x=91,y=171,w=780,h=429,banner=false}={}){
  spinner(s,725,626,23,15,4,[C.red,"#003DFF"]);text(s,"Magnetization",772,607,118,37,17,{italic:true,color:"#555555"});
  [[418,344],[528,394],[418,466],[325,499],[436,542],[529,505],[326,613],[437,606],[626,606]].forEach(([x,y])=>dot(s,x,y));
  [[418,344,456,413],[456,413,528,394],[456,413,418,466],[325,499,365,570],[365,570,436,542],[365,570,326,613],[436,542,480,605],[480,605,529,505],[480,605,437,606],[529,505,577,572],[577,572,626,606]].forEach(a=>line(s,...a,C.olive,2));
- notes(s,"Team Singapore PDF page 4. Colored parameter groups and diagram are editable native shapes; the four category labels and original parameter wording are retained. Verify prompt wording and replace the sample diagram when converting a different problem.");
+ notes(s,"Colored parameter-inventory page type. Groups and diagram are editable native shapes; replace the category labels, parameter wording and sample diagram for the problem being presented.");
 }
 // 4 Overview — section count and footer share the same config list.
 {
@@ -107,22 +130,22 @@ function sampleChart(s,{x=91,y=171,w=780,h=429,banner=false}={}){
 }
 // 6 Model/diagram page.
 {
- const s=slide("Current Cylinder Model","model");spinner(s,272,359,118,8,12,["#D9E4D1", "#A4B993"]);circle(s,699,359,118,"#DCE4D6",C.ink,3);text(s,"≡",468,307,70,100,67,{align:"center"});label(s,"Model assumption",153,523,245,43,C.yellow);text(s,"Replace this diagram and statement with the model used in the new problem.",417,521,465,88,23,{italic:true});notes(s,"Diagram is editable. This is a layout exemplar based on Team Singapore PDF page 7, not a validated model for another problem.");
+ const s=slide("Current Cylinder Model","model");spinner(s,272,359,118,8,12,["#D9E4D1", "#A4B993"]);circle(s,699,359,118,"#DCE4D6",C.ink,3);text(s,"≡",468,307,70,100,67,{align:"center"});label(s,"Model assumption",153,523,245,43,C.yellow);text(s,"Replace this diagram and statement with the model used in the new problem.",417,521,465,88,23,{italic:true});notes(s,"Diagram is editable. This is a layout exemplar, not a validated model for any problem.");
 }
-// 7 Source characterization pattern: three apparatus images above three compact plots.
+// 7 Characterization pattern: three apparatus images above three compact plots.
 {
  const s=slide("Characterization","characterization");
  const imgs=["p10-image1.png","p10-image0.png","p10-image2.png"], names=["Moment of inertia","Air drag & friction","Magnetization"];
- for(let i=0;i<3;i++){const x=43+i*319;await photo(s,imgs[i],x,168,211,165,`Team Singapore apparatus photograph: ${names[i]}`);rect(s,x,166,211,167,"none",C.ink,3);label(s,names[i],x-5,342,221,38,C.yellow,C.ink,18)}
+ for(let i=0;i<3;i++){const x=43+i*319;await photo(s,imgs[i],x,168,211,165,`Apparatus photograph placeholder: ${names[i]}`);rect(s,x,166,211,167,"none",C.ink,3);label(s,names[i],x-5,342,221,38,C.yellow,C.ink,18)}
  plotLine(s,40,411,243,136,[0.04,0.22,0.40,0.58,0.76,0.94]);
  plotLine(s,359,411,243,136,[0,0.34,0.59,0.76,0.89,0.97]);
  plotLine(s,678,411,243,136,[0.99,0.49,0.24,0.12,0.05,0.01]);
- label(s,"I = 1.72 × 10⁻⁴ kg m²",32,566,261,38,C.bg,C.ink,16);
- label(s,"cdrag = 2.41 × 10⁻⁵ kg m² s⁻¹",346,566,270,38,C.bg,C.ink,15);
- label(s,"M = (6.5 ± 0.5) × 10⁵ A/m",668,566,270,38,C.bg,C.ink,15);
+ label(s,"I = [value] kg m²",32,566,261,38,C.bg,C.ink,16);
+ label(s,"cdrag = [value] kg m² s⁻¹",346,566,270,38,C.bg,C.ink,15);
+ label(s,"M = [value ± uncertainty] A/m",668,566,270,38,C.bg,C.ink,15);
  text(s,"Schematic plots — replace data",40,608,250,25,12,{italic:true,color:"#555555"});
- label(s,"τfriction = 1.48 × 10⁻⁴ N m",346,606,270,30,C.bg,C.ink,14);
- notes(s,"Layout and retained example values: Team Singapore Magnetic Gear PDF page 10. Photos are embedded replaceable image objects. Plot lines are editable schematic redraws for layout only; obtain original data before using the graphs as evidence. Numerical values also require source verification before reuse in a new presentation.");
+ label(s,"τfriction = [value] N m",346,606,270,30,C.bg,C.ink,14);
+ notes(s,"Layout: three apparatus photos above three compact plots. Photos are replaceable image objects (placeholders unless local reference images are present). Plot lines are editable schematic drawings for layout only; the bracketed values are placeholders to be replaced with measured data and uncertainty.");
 }
 // 8 Equation + diagram page.
 {
@@ -137,35 +160,35 @@ function sampleChart(s,{x=91,y=171,w=780,h=429,banner=false}={}){
  text(s,"Iθ̈₁ = K[(R − d₀)θ₁ + Rθ₂]",519,493,377,42,22,{italic:true});
  text(s,"Iθ̈₂ = K[Rθ₁ + (R − d₀)θ₂]",519,539,377,42,22,{italic:true});
  text(s,"K = 3 μ₀m₁m₂R / [4π(d₀ − 2R)⁵]",519,583,385,35,18,{italic:true});
- notes(s,"Editable interpretation of Team Singapore PDF page 21: two perturbed spinner diagrams and the dipole-to-linearized-equation hierarchy. The compact K substitution is for template readability; verify equations, assumptions, symbols and typesetting against the original before citing or presenting them.");
+ notes(s,"Layout: two perturbed spinner diagrams and a dipole-to-linearized-equation hierarchy. The compact K substitution is for template readability; verify equations, assumptions and symbols independently before citing or presenting them.");
 }
 // 9 Apparatus / evidence page.
 {
  const s=slide("Experimental Set-up","apparatus");
- await photo(s,"p14-image0.png",72,126,535,535,"Team Singapore photograph of two magnetic spinners",270);
+ await photo(s,"p14-image0.png",72,126,535,535,"Apparatus photograph placeholder: two magnetic spinners",270,[72,249,535,288]);
  rect(s,72,249,535,288,"none",C.ink,3);
- await photo(s,"p14-image1.png",700,327,162,162,"Team Singapore close-up of ceramic bearing");
+ await photo(s,"p14-image1.png",700,327,162,162,"Close-up photograph placeholder: ceramic bearing");
  circle(s,781,408,85,"none",C.olive,4);
  rect(s,246,175,206,70,"#ECEAE4",C.ink,2);text(s,"3D printed\nfidget spinners",264,181,172,58,22,{italic:true,align:"center"});
  rect(s,641,174,261,101,"#ECEAE4",C.ink,2);text(s,"Non-magnetic\nceramic bearings to\nreduce friction",660,182,222,85,21,{italic:true,align:"center"});
  dash(s,604,340,702,359);dash(s,604,469,702,458);circle(s,314,601,24,"none",C.ink,2);text(s,"✓",295,578,40,45,27,{align:"center"});text(s,"Two bearings for each spinner\nto prevent wobbling",352,581,360,54,20,{italic:true});
- notes(s,"Team Singapore PDF page 14. Both photographs are user-supplied source images and remain replaceable image objects. Callout boxes, connectors and checkmark are editable. Ensure the photo orientation/crop and component labels fit the apparatus when reusing this layout.");
+ notes(s,"Apparatus page type. Photographs are replaceable image objects (placeholders unless local reference images are present). Callout boxes, connectors and checkmark are editable. Ensure the photo orientation/crop and component labels fit the apparatus when reusing this layout.");
 }
 // 9 Editable graph page.
 {
- const s=slide("Graph and comparison","graph");sampleChart(s);notes(s,"Native editable chart with illustrative values only. Replace every value, axis label, unit and legend before presenting. Layout based on Team Singapore graph pages 17–24.");
+ const s=slide("Graph and comparison","graph");sampleChart(s);notes(s,"Native editable chart with illustrative values only. Replace every value, axis label, unit and legend before presenting.");
 }
-// 10 Optional Slovakia-style graph conclusion banner.
+// 10 Optional graph conclusion banner.
 {
- const s=slide("Graph with conclusion","graphBanner");sampleChart(s,{banner:true});notes(s,"Optional translucent banner adapted from Team Slovakia Wet Scroll PDF page 26. Rewrite the statement to a conclusion supported by the plotted data; remove the banner where it hides important evidence.");
+ const s=slide("Graph with conclusion","graphBanner");sampleChart(s,{banner:true});notes(s,"Optional translucent conclusion banner across a graph. Rewrite the statement to a conclusion supported by the plotted data; remove the banner where it hides important evidence.");
 }
 // 11 Theory/experiment comparison.
 {
- const s=slide("Theory and experiment","comparison");label(s,"Experiment",57,154,392,39);label(s,"Theory",510,154,392,39);rect(s,57,207,392,340,C.bg,C.ink,2);rect(s,510,207,392,340,C.bg,C.ink,2);text(s,"Insert measured graph, photo or video still",93,318,320,99,23,{italic:true,align:"center"});text(s,"Insert model prediction or mechanism diagram",550,318,309,99,23,{italic:true,align:"center"});text(s,"State the agreement and the disagreement, including uncertainty.",84,570,795,59,22,{italic:true,align:"center"});notes(s,"Comparison layout based on Team Singapore pages 29–30. Preserve measured values and uncertainty when transforming a source deck.");
+ const s=slide("Theory and experiment","comparison");label(s,"Experiment",57,154,392,39);label(s,"Theory",510,154,392,39);rect(s,57,207,392,340,C.bg,C.ink,2);rect(s,510,207,392,340,C.bg,C.ink,2);text(s,"Insert measured graph, photo or video still",93,318,320,99,23,{italic:true,align:"center"});text(s,"Insert model prediction or mechanism diagram",550,318,309,99,23,{italic:true,align:"center"});text(s,"State the agreement and the disagreement, including uncertainty.",84,570,795,59,22,{italic:true,align:"center"});notes(s,"Comparison layout. Preserve measured values and uncertainty when transforming a source deck.");
 }
 // 12 Summary card with retained style, flexible content.
 {
- const s=slide("Summary","summary");text(s,cfg.problemStatement,54,143,845,99,21,{italic:true});label(s,"Main model",54,265,354,36,C.cyan);label(s,"Key observation",552,265,354,36,C.cyan);text(s,"• Physical mechanism\n• Assumptions and limits\n• Parameter dependence",73,320,343,176,23);text(s,"• Measured trend\n• Theory comparison\n• Remaining discrepancy",569,320,343,176,23);notes(s,"Summary layout based on Team Singapore pages 63–65. Bullet content is instructional placeholder text, not a finding.");
+ const s=slide("Summary","summary");text(s,cfg.problemStatement,54,143,845,99,21,{italic:true});label(s,"Main model",54,265,354,36,C.cyan);label(s,"Key observation",552,265,354,36,C.cyan);text(s,"• Physical mechanism\n• Assumptions and limits\n• Parameter dependence",73,320,343,176,23);text(s,"• Measured trend\n• Theory comparison\n• Remaining discrepancy",569,320,343,176,23);notes(s,"Summary layout. Bullet content is instructional placeholder text, not a finding.");
 }
 // 13 References.
 {
@@ -173,7 +196,7 @@ function sampleChart(s,{x=91,y=171,w=780,h=429,banner=false}={}){
 }
 // 14 Closing.
 {
- const s=slide("",null,{foot:false});text(s,"Thank you!",189,146,610,65,46);text(s,cfg.teamLine,190,217,595,36,25);rect(s,50,287,860,6,C.ink);spinner(s,684,439,78);text(s,cfg.problemTitle,54,351,520,56,32);rect(s,50,608,860,6,C.ink);notes(s,"Closing layout based on Team Singapore PDF page 67. Replace title and presenter.");
+ const s=slide("",null,{foot:false});text(s,"Thank you!",189,146,610,65,46);text(s,cfg.teamLine,190,217,595,36,25);rect(s,50,287,860,6,C.ink);spinner(s,684,439,78);text(s,cfg.problemTitle,54,351,520,56,32);rect(s,50,608,860,6,C.ink);notes(s,"Closing layout. Replace title and presenter.");
 }
 
 await fs.mkdir(path.dirname(outputPath),{recursive:true});

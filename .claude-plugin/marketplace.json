@@ -1,0 +1,17 @@
+{
+  "name": "pt-research",
+  "owner": {
+    "name": "PT Research Team"
+  },
+  "metadata": {
+    "description": "PT Research: a marketplace for the PT Research plugin, auditable IYPT/CYPT research, simulation routing, and research-software engineering standards."
+  },
+  "plugins": [
+    {
+      "name": "pt-research-plugin",
+      "source": "./pt-research-plugin",
+      "description": "Auditable IYPT/CYPT research, simulation routing, and research-software engineering standards.",
+      "category": "productivity"
+    }
+  ]
+}

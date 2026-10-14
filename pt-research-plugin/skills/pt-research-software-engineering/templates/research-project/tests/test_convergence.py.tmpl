@@ -1,0 +1,61 @@
+"""Convergence studies: error must fall at the expected rate as resolution improves."""
+
+from __future__ import annotations
+
+import numpy as np
+
+from @@PACKAGE@@.analytic import underdamped_position
+from @@PACKAGE@@.model import DampedOscillator, FloatArray
+from @@PACKAGE@@.solver import simulate
+
+MODEL = DampedOscillator(0.25, 40.0, 0.1)
+Y0 = np.array([0.02, 0.0])
+T_END = 1.0
+
+
+def rk4_max_error(n_steps: int) -> float:
+    """Max position error over the trajectory for classical RK4 with a fixed step.
+
+    RK4 stands in for any custom discretization under test. The maximum over the whole
+    trajectory is used because a single end-point error can be accidentally small.
+    """
+    h = T_END / n_steps
+    y: FloatArray = Y0.copy()
+    t = 0.0
+    positions = [float(y[0])]
+    for _ in range(n_steps):
+        k1 = MODEL.rhs(t, y)
+        k2 = MODEL.rhs(t + h / 2, y + h / 2 * k1)
+        k3 = MODEL.rhs(t + h / 2, y + h / 2 * k2)
+        k4 = MODEL.rhs(t + h, y + h * k3)
+        y = y + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
+        t += h
+        positions.append(float(y[0]))
+    grid = np.linspace(0.0, T_END, n_steps + 1)
+    exact = underdamped_position(MODEL, 0.02, 0.0, grid)
+    return float(np.max(np.abs(np.array(positions) - exact)))
+
+
+def exact_final_position() -> float:
+    return float(underdamped_position(MODEL, 0.02, 0.0, np.array([T_END]))[0])
+
+
+def test_fixed_step_observed_order_is_four() -> None:
+    """Observed order p = log2(e(h) / e(h/2)) from a step-size study in the asymptotic range."""
+    errors = [rk4_max_error(n) for n in (20, 40, 80)]
+    orders = [float(np.log2(errors[i] / errors[i + 1])) for i in range(2)]
+    assert all(3.7 < order < 4.5 for order in orders), orders
+
+
+def test_error_decreases_with_tolerance() -> None:
+    """Adaptive solver: tightening rtol must not increase the error (tolerance study)."""
+    exact = exact_final_position()
+    errors = []
+    for rtol in (1e-4, 1e-6, 1e-8, 1e-10):
+        trajectory = simulate(
+            MODEL, Y0, T_END, np.array([T_END]), method="DOP853", rtol=rtol, atol=rtol * 1e-3
+        )
+        errors.append(abs(float(trajectory.y[0, -1]) - exact))
+    assert errors[-1] < errors[0]
+    assert all(later <= earlier * 1.5 for earlier, later in zip(errors, errors[1:]))
+    assert errors[-1] < 1e-9

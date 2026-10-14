@@ -53,6 +53,15 @@ specialists:
     dependency_checks: [accessible_paper_text]
     failure_behavior: label_abstract_only_or_unavailable
     return_to_orchestrator: report_equation_and_regime_gaps
+  pt-research-software-engineering:
+    role: mandatory_engineering_and_scientific_computing_standards_for_code_producing_stages
+    prerequisites: [simulation_route.yaml_or_theory_stage_code_plan, requirements_and_design_notes]
+    input: [simulation_route.yaml, simulation_spec.yaml, solver_requirements.yaml, runtime.yaml, engineering_standards.yaml]
+    output: [engineering_standards.yaml, docs/adr/stack-decision, research_software_project_scaffold, verification_plan, test_and_lint_receipts]
+    allowed_when: [candidate_models_built, candidate_models_selected, simulation_routed, simulation_specified, package_implemented, synthetic_smoke_tested, case_generated, baseline_executed, numerically_validated, physically_validated, parameter_study_complete, handoff_complete]
+    dependency_checks: [python3, optional_ruff_mypy_pytest_pint_hypothesis_reported_not_installed]
+    failure_behavior: preserve_declaration_mark_tools_untested_and_block_runnable_or_verified_claims_without_receipts
+    return_to_orchestrator: declaration_and_structure_only_never_scientific_acceptance
   pt-simulation-router:
     role: physics_first_numerical_route_selection
     prerequisites: [problem_contract.yaml, apparatus_fidelity.yaml, essence_and_chain.yaml, evidence_matrix.yaml, model_registry.yaml, theory/equations.yaml, parameter_equation_map.yaml]

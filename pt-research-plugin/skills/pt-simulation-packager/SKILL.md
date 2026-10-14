@@ -7,6 +7,19 @@ description: Create a beginner-friendly reproducible package for an orchestrator
 
 Use only through `pt-orchestrator` after a valid single-solver route/specification and a target-platform decision. Read [packaging policy](references/cross-platform-packaging.md) before producing files.
 
+Every package is research code and must satisfy `pt-research-software-engineering` before it is
+called `implementation_ready`: requirements/design notes, a stack ADR with alternatives and
+a paradigm justification, typed interfaces, linter/formatter/type-checker/CI configuration, a
+pinned or lockfile-backed environment, configuration separated from code, logging and error
+handling, a test plan with dimensional, convergence, and conservation or analytic-benchmark tests,
+uncertainty treatment, run-metadata (provenance) capture, and an interface choice (headless core;
+GUI/TUI only as a thin accessible layer). Use `python scripts/scaffold_research_software.py` for a
+Python research project and declare the result in `engineering_standards.yaml`; validate it with
+`python scripts/validate_engineering_standards.py`. The declaration proves structure only: record
+tool runs (pytest, ruff, mypy) as receipts, record tools that were unavailable as not run, and
+never describe a scaffolded-but-unrun test as passing. Packages from `generate_package.py` predate
+this manifest and keep their existing claim ceiling until a manifest is declared.
+
 Keep calibration evidence separate from package smoke evidence. If the package exposes a
 parameter-fitting path, include the case's version-1 `calibration_plan.yaml` and require its
 predeclared objective, units, uncertainty metadata, bounds, identifiability evidence, and

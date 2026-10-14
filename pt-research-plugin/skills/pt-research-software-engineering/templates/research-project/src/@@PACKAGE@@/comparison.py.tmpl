@@ -1,0 +1,47 @@
+"""Quantitative theory-versus-experiment comparison."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+import numpy as np
+
+from .model import FloatArray
+
+
+@dataclass(frozen=True)
+class ComparisonMetrics:
+    n_points: int
+    rmse: float
+    reduced_chi_squared: float
+    max_abs_standardized_residual: float
+    fraction_within_2_sigma: float
+
+
+def compare(
+    y_experiment: FloatArray,
+    sigma_experiment: FloatArray,
+    y_theory: FloatArray,
+    *,
+    n_fitted_parameters: int = 0,
+) -> ComparisonMetrics:
+    """Goodness-of-fit metrics for theory against measurements with stated uncertainty.
+
+    Use held-out data for any claim of predictive agreement; metrics computed on the
+    calibration data only describe the fit. The measurement sigma must exclude model error.
+    """
+    if not (y_experiment.shape == sigma_experiment.shape == y_theory.shape):
+        raise ValueError("experiment, sigma, and theory must share one shape")
+    if np.any(sigma_experiment <= 0):
+        raise ValueError("measurement uncertainties must be positive")
+    dof = y_experiment.size - n_fitted_parameters
+    if dof <= 0:
+        raise ValueError("need more observations than fitted parameters")
+    standardized = (y_experiment - y_theory) / sigma_experiment
+    return ComparisonMetrics(
+        n_points=int(y_experiment.size),
+        rmse=float(np.sqrt(np.mean((y_experiment - y_theory) ** 2))),
+        reduced_chi_squared=float(np.sum(standardized**2) / dof),
+        max_abs_standardized_residual=float(np.abs(standardized).max()),
+        fraction_within_2_sigma=float(np.mean(np.abs(standardized) <= 2.0)),
+    )

@@ -1,0 +1,47 @@
+"""Configuration validation at the boundary."""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+import pytest
+
+from @@PACKAGE@@.config import load_config, parse_config
+from @@PACKAGE@@.errors import ConfigError
+
+
+def test_default_config_loads(default_config_path: Path) -> None:
+    config = load_config(default_config_path)
+    assert config.solver.rtol > 0 and config.model.mass_kg > 0
+
+
+def test_missing_file_is_a_config_error(tmp_path: Path) -> None:
+    with pytest.raises(ConfigError):
+        load_config(tmp_path / "absent.toml")
+
+
+@pytest.mark.parametrize(
+    ("table", "key", "value"),
+    [
+        ("model", "stiffness_n_per_m", 0.0),
+        ("model", "damping_kg_per_s", -1.0),
+        ("solver", "method", "euler"),
+        ("solver", "n_samples", 1),
+        ("run", "seed", -3),
+    ],
+)
+def test_invalid_values_are_rejected(
+    default_config_path: Path, table: str, key: str, value: object
+) -> None:
+    import copy
+
+    try:
+        import tomllib
+    except ModuleNotFoundError:  # pragma: no cover
+        import tomli as tomllib  # type: ignore[no-redef]
+    with default_config_path.open("rb") as handle:
+        raw = tomllib.load(handle)
+    broken = copy.deepcopy(raw)
+    broken[table][key] = value
+    with pytest.raises(ConfigError):
+        parse_config(broken)

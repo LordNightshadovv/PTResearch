@@ -1,0 +1,47 @@
+"""Dimensional bookkeeping.
+
+Pint is the preferred runtime units library (``pip install .[units]``). This module keeps a
+small, dependency-free registry of SI dimension exponents (mass, length, time) so the
+dimensional-consistency test always runs, even where Pint is unavailable. It checks the
+declared dimensions of the model's quantities; it does not replace Pint for arithmetic.
+"""
+
+from __future__ import annotations
+
+from typing import Tuple
+
+Dimension = Tuple[int, int, int]  # exponents of (mass, length, time)
+
+DIMENSIONLESS: Dimension = (0, 0, 0)
+MASS: Dimension = (1, 0, 0)
+LENGTH: Dimension = (0, 1, 0)
+TIME: Dimension = (0, 0, 1)
+
+PARAMETER_DIMENSIONS: dict[str, Dimension] = {
+    "mass_kg": MASS,
+    "stiffness_n_per_m": (1, 0, -2),  # N/m = kg s^-2
+    "damping_kg_per_s": (1, 0, -1),
+    "position_m": LENGTH,
+    "velocity_m_per_s": (0, 1, -1),
+    "time_s": TIME,
+    "energy_j": (1, 2, -2),
+}
+
+
+def multiply(a: Dimension, b: Dimension) -> Dimension:
+    return (a[0] + b[0], a[1] + b[1], a[2] + b[2])
+
+
+def divide(a: Dimension, b: Dimension) -> Dimension:
+    return (a[0] - b[0], a[1] - b[1], a[2] - b[2])
+
+
+def power(a: Dimension, exponent: int) -> Dimension:
+    return (a[0] * exponent, a[1] * exponent, a[2] * exponent)
+
+
+def sqrt(a: Dimension) -> Dimension:
+    """Square root of a dimension; every exponent must be even."""
+    if any(component % 2 for component in a):
+        raise ValueError(f"dimension {a} has no integer square root")
+    return (a[0] // 2, a[1] // 2, a[2] // 2)

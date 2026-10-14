@@ -1,0 +1,38 @@
+"""Optional plotting helpers (requires the ``plot`` extra: matplotlib)."""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+from .model import FloatArray
+
+
+def overlay_with_error_bars(
+    x: FloatArray,
+    y_experiment: FloatArray,
+    sigma_experiment: FloatArray,
+    y_theory: FloatArray,
+    path: Path,
+    *,
+    xlabel: str,
+    ylabel: str,
+) -> None:
+    """Theory curve over measurements with 1-sigma error bars and a residual panel."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    fig, (top, bottom) = plt.subplots(
+        2, 1, sharex=True, figsize=(6, 5), gridspec_kw={"height_ratios": [3, 1]}
+    )
+    top.errorbar(x, y_experiment, yerr=sigma_experiment, fmt="o", label="experiment (1 sigma)")
+    top.plot(x, y_theory, "-", label="theory")
+    top.set_ylabel(ylabel)
+    top.legend()
+    bottom.errorbar(x, (y_experiment - y_theory), yerr=sigma_experiment, fmt="o")
+    bottom.axhline(0.0, color="black", linewidth=0.8)
+    bottom.set_xlabel(xlabel)
+    bottom.set_ylabel("residual")
+    fig.savefig(path, dpi=150)
+    plt.close(fig)

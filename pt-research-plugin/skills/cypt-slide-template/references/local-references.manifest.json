@@ -1,0 +1,91 @@
+{
+  "schema": "pt-research-local-references-manifest",
+  "version": 1,
+  "notice": "These decks belong to other teams and are NOT redistributed with the plugin. This manifest only records where to obtain each file and how to verify the exact bytes. Restore them with scripts/fetch_local_references.py.",
+  "decks": [
+    {
+      "filename": "Magnetic Gear Singapore.pdf",
+      "team": "Team Singapore",
+      "problem": "Presentation of the Magnetic Gear problem (coupled magnetic fidget spinners), used only as a local style reference.",
+      "source_url": "https://drive.google.com/uc?export=download&id=16te3mlLjZOUrIsIf6b1HJT8yy0jN4lWG",
+      "alternate_urls": [
+        "https://drive.usercontent.google.com/download?id=16te3mlLjZOUrIsIf6b1HJT8yy0jN4lWG&export=download"
+      ],
+      "size": 3806715,
+      "sha256": "009ee661ee84705fe2d76cae9dcaf97447f312db1aff72cc8acd9ca4b85d4e18"
+    },
+    {
+      "filename": "Wet Scroll Slovakia.pdf",
+      "team": "Team Slovakia",
+      "problem": "Presentation of the Wet Scroll problem, used only as a local style reference.",
+      "source_url": "https://drive.google.com/uc?export=download&id=1BnjETcbtS2_dleh-f6WWghYXU0XFqfMp",
+      "alternate_urls": [
+        "https://drive.usercontent.google.com/download?id=1BnjETcbtS2_dleh-f6WWghYXU0XFqfMp&export=download"
+      ],
+      "size": 2783601,
+      "sha256": "d8433150b0e0df1fe12ee71cdbaf971d38029a3b1a5f8245eb442e28d6b7d5d5"
+    }
+  ],
+  "derived_images": [
+    {
+      "output": "p10-image0.png",
+      "source_deck": "Magnetic Gear Singapore.pdf",
+      "page": 10,
+      "xobject": "Image72",
+      "width": 176,
+      "height": 177,
+      "jpeg_sha256": "c8daef18e371e45e35f2d0c364f6634a402ee9d4594637a3d6d10eb8e3afd1b5"
+    },
+    {
+      "output": "p10-image1.png",
+      "source_deck": "Magnetic Gear Singapore.pdf",
+      "page": 10,
+      "xobject": "Image73",
+      "width": 194,
+      "height": 169,
+      "jpeg_sha256": "b41c8b684115d68c81ebdd017db4a6b8763fcf30aac0bd8fadeca48b0054f939"
+    },
+    {
+      "output": "p10-image2.png",
+      "source_deck": "Magnetic Gear Singapore.pdf",
+      "page": 10,
+      "xobject": "Image74",
+      "width": 236,
+      "height": 177,
+      "jpeg_sha256": "bb81c6006b567934ad47b3c5910098da8d25c66822e01c4993783114ecb5edd4"
+    },
+    {
+      "output": "p14-image0.png",
+      "source_deck": "Magnetic Gear Singapore.pdf",
+      "page": 14,
+      "xobject": "Image94",
+      "width": 285,
+      "height": 530,
+      "jpeg_sha256": "c57999507e64e65eeb26c50b5bba0b646c79d16fa7572c11d5ffdbcd228090a5"
+    },
+    {
+      "output": "p14-image1.png",
+      "source_deck": "Magnetic Gear Singapore.pdf",
+      "page": 14,
+      "xobject": "Image96",
+      "width": 155,
+      "height": 154,
+      "jpeg_sha256": "270b16c36acde73c91676ac662e661d2c21eb479d551c4a64763007f864d7524"
+    }
+  ],
+  "derived_files": [
+    {
+      "filename": "CYPT_editable_template.pptx",
+      "description": "Starter template with the extracted photos embedded. Regenerate with the builder after the source images exist; the output is not byte-identical, so it carries no checksum.",
+      "regenerate": "node <plugin-root>/skills/cypt-slide-template/scripts/build_template.mjs <plugin-root>/skills/cypt-slide-template/assets/template-config.json <workspace>/deliverables/cypt-slide-template/CYPT_with_photos.pptx, then copy the result to <local-references>/CYPT_editable_template.pptx"
+    },
+    {
+      "filename": "CYPT_editable_template_reference.pptx",
+      "description": "Point-in-time copy of the photo-embedded starter. Optional; copy the regenerated CYPT_editable_template.pptx if wanted.",
+      "regenerate": "cp CYPT_editable_template.pptx CYPT_editable_template_reference.pptx"
+    }
+  ],
+  "optional": [
+    "A .pptx conversion of the Singapore PDF may exist on the owner's computer. It is not required, not verified here, and not downloadable from this manifest."
+  ]
+}

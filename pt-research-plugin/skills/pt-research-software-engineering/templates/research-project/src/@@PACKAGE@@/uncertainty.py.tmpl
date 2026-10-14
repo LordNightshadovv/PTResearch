@@ -1,0 +1,148 @@
+"""Uncertainty propagation, fit uncertainties, residual analysis, sweeps, and sensitivity.
+
+Established libraries are preferred where installed (``uncertainties`` for analytic
+propagation, ``lmfit`` for richer fitting). These helpers are small NumPy/SciPy wrappers that
+make the statistical conventions explicit and testable. Separate measurement, calibration,
+numerical, sampling, and model-form uncertainty in reports; this module covers the
+measurement/sampling parts only.
+"""
+
+from __future__ import annotations
+
+from collections.abc import Callable, Sequence
+from dataclasses import dataclass
+
+import numpy as np
+from scipy.optimize import curve_fit
+
+from .model import FloatArray
+
+
+@dataclass(frozen=True)
+class Propagated:
+    mean: float
+    std: float
+    n_samples: int
+    seed: int
+
+
+def linear_propagation(
+    func: Callable[[FloatArray], float],
+    values: Sequence[float],
+    sigmas: Sequence[float],
+    *,
+    relative_step: float = 1e-6,
+) -> float:
+    """First-order propagation for independent inputs, using central differences.
+
+    sigma_f^2 = sum_i (df/dx_i)^2 sigma_i^2. Valid only while ``func`` is close to linear
+    over +/- a few sigma; compare against ``monte_carlo_propagation`` when in doubt.
+    """
+    x = np.asarray(values, dtype=np.float64)
+    variance = 0.0
+    for index, sigma in enumerate(sigmas):
+        step = relative_step * max(abs(x[index]), 1.0)
+        upper = x.copy()
+        lower = x.copy()
+        upper[index] += step
+        lower[index] -= step
+        derivative = (func(upper) - func(lower)) / (2.0 * step)
+        variance += (derivative * sigma) ** 2
+    return float(np.sqrt(variance))
+
+
+def monte_carlo_propagation(
+    func: Callable[[FloatArray], float],
+    values: Sequence[float],
+    sigmas: Sequence[float],
+    *,
+    n_samples: int = 20_000,
+    seed: int = 0,
+) -> Propagated:
+    """Monte Carlo propagation for independent Gaussian inputs with an explicit seed."""
+    rng = np.random.default_rng(seed)
+    means = np.asarray(values, dtype=np.float64)
+    spreads = np.asarray(sigmas, dtype=np.float64)
+    draws = rng.normal(means, spreads, size=(n_samples, means.size))
+    outputs = np.array([func(row) for row in draws], dtype=np.float64)
+    return Propagated(
+        mean=float(outputs.mean()),
+        std=float(outputs.std(ddof=1)),
+        n_samples=n_samples,
+        seed=seed,
+    )
+
+
+@dataclass(frozen=True)
+class FitResult:
+    parameters: FloatArray
+    standard_errors: FloatArray
+    covariance: FloatArray
+    reduced_chi_squared: float
+    degrees_of_freedom: int
+    residuals: FloatArray
+
+
+def reduced_chi_squared(
+    observed: FloatArray, predicted: FloatArray, sigma: FloatArray, n_parameters: int
+) -> float:
+    """chi^2 / dof with dof = N - n_parameters (must be positive)."""
+    dof = observed.size - n_parameters
+    if dof <= 0:
+        raise ValueError("need more observations than fitted parameters")
+    chi2 = float(np.sum(((observed - predicted) / sigma) ** 2))
+    return chi2 / dof
+
+
+def fit_with_uncertainty(
+    func: Callable[..., FloatArray],
+    x: FloatArray,
+    y: FloatArray,
+    sigma: FloatArray,
+    p0: Sequence[float],
+) -> FitResult:
+    """Weighted least squares with ``absolute_sigma=True`` so errors reflect measured sigma."""
+    popt, pcov = curve_fit(func, x, y, p0=p0, sigma=sigma, absolute_sigma=True)
+    predicted = func(x, *popt)
+    return FitResult(
+        parameters=np.asarray(popt, dtype=np.float64),
+        standard_errors=np.sqrt(np.diag(pcov)),
+        covariance=np.asarray(pcov, dtype=np.float64),
+        reduced_chi_squared=reduced_chi_squared(y, predicted, sigma, len(popt)),
+        degrees_of_freedom=int(y.size - len(popt)),
+        residuals=y - predicted,
+    )
+
+
+def residual_summary(residuals: FloatArray, sigma: FloatArray) -> dict[str, float]:
+    """Standardized-residual diagnostics: bias, spread, worst case, lag-1 correlation."""
+    standardized = residuals / sigma
+    lag1 = (
+        float(np.corrcoef(standardized[:-1], standardized[1:])[0, 1])
+        if standardized.size > 2
+        else float("nan")
+    )
+    return {
+        "mean": float(standardized.mean()),
+        "std": float(standardized.std(ddof=1)),
+        "max_abs": float(np.abs(standardized).max()),
+        "lag1_autocorrelation": lag1,
+    }
+
+
+def parameter_sweep(
+    observable: Callable[[float], float], values: Sequence[float]
+) -> list[tuple[float, float]]:
+    """Evaluate a scalar observable on a one-dimensional parameter grid."""
+    return [(float(value), float(observable(float(value)))) for value in values]
+
+
+def local_sensitivity(
+    observable: Callable[[float], float], value: float, *, relative_step: float = 1e-4
+) -> float:
+    """Dimensionless logarithmic sensitivity d ln(f) / d ln(p) at ``value`` (central difference)."""
+    step = relative_step * abs(value)
+    upper = observable(value + step)
+    lower = observable(value - step)
+    centre = observable(value)
+    return float(((upper - lower) / (2.0 * step)) * value / centre)

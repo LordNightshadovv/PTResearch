@@ -1,0 +1,23 @@
+"""Property-based tests (requires the ``dev`` extra: hypothesis)."""
+
+from __future__ import annotations
+
+import math
+
+import pytest
+
+hypothesis = pytest.importorskip("hypothesis")
+from hypothesis import given  # noqa: E402
+from hypothesis import strategies as st  # noqa: E402
+
+from @@PACKAGE@@.model import DampedOscillator  # noqa: E402
+
+positive = st.floats(min_value=1e-3, max_value=1e3, allow_nan=False, allow_infinity=False)
+
+
+@given(mass=positive, stiffness=positive, damping=positive)
+def test_damping_ratio_scale_invariance(mass: float, stiffness: float, damping: float) -> None:
+    """zeta = c / (2 sqrt(k m)) is invariant when m, k, and c are all scaled by the same factor."""
+    base = DampedOscillator(mass, stiffness, damping)
+    scaled = DampedOscillator(2.0 * mass, 2.0 * stiffness, 2.0 * damping)
+    assert math.isclose(base.damping_ratio, scaled.damping_ratio, rel_tol=1e-12)

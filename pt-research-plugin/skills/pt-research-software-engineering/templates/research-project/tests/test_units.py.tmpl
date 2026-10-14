@@ -1,0 +1,44 @@
+"""Dimensional-analysis tests: derived quantities must have the dimensions the theory states."""
+
+from __future__ import annotations
+
+import pytest
+
+from @@PACKAGE@@ import units
+from @@PACKAGE@@.model import DampedOscillator
+
+
+def test_omega0_is_inverse_time() -> None:
+    stiffness_over_mass = units.divide(
+        units.PARAMETER_DIMENSIONS["stiffness_n_per_m"], units.PARAMETER_DIMENSIONS["mass_kg"]
+    )
+    assert units.sqrt(stiffness_over_mass) == units.power(units.TIME, -1)
+
+
+def test_damping_ratio_is_dimensionless() -> None:
+    d = units.PARAMETER_DIMENSIONS
+    denominator = units.sqrt(units.multiply(d["stiffness_n_per_m"], d["mass_kg"]))
+    assert units.divide(d["damping_kg_per_s"], denominator) == units.DIMENSIONLESS
+
+
+def test_energy_dimension_matches_both_terms() -> None:
+    d = units.PARAMETER_DIMENSIONS
+    kinetic = units.multiply(d["mass_kg"], units.power(d["velocity_m_per_s"], 2))
+    potential = units.multiply(d["stiffness_n_per_m"], units.power(d["position_m"], 2))
+    assert kinetic == potential == d["energy_j"]
+
+
+def test_non_integer_sqrt_is_rejected() -> None:
+    with pytest.raises(ValueError):
+        units.sqrt(units.MASS)
+
+
+def test_pint_agrees_with_declared_dimensions() -> None:
+    pint = pytest.importorskip("pint")
+    ureg = pint.UnitRegistry()
+    model = DampedOscillator(0.25, 40.0, 0.1)
+    omega0 = (
+        (model.stiffness_n_per_m * ureg.newton / ureg.meter)
+        / (model.mass_kg * ureg.kilogram)
+    ) ** 0.5
+    assert omega0.to("1/s").magnitude == pytest.approx(model.omega0_rad_per_s)

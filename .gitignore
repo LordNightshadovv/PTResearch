@@ -1,0 +1,7 @@
+# Local-only material: never publish. See pt-research-plugin/.gitignore for details.
+.DS_Store
+__pycache__/
+*.pyc
+local.paths.json
+.env.local
+**/assets/local-references/

@@ -1,0 +1,19 @@
+"""The interface layer is tested headlessly through its toolkit-independent controller."""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+from @@PACKAGE@@.gui.controller import RunForm, render_text, submit
+
+
+def test_valid_form_produces_a_view(default_config_path: Path) -> None:
+    view = submit(RunForm(config_path=str(default_config_path), damping_kg_per_s="0.2"))
+    assert view.ok and view.final_energy_j is not None
+    assert "final energy" in render_text(view)
+
+
+def test_invalid_input_becomes_an_error_view_not_an_exception(default_config_path: Path) -> None:
+    view = submit(RunForm(config_path=str(default_config_path), damping_kg_per_s="abc"))
+    assert not view.ok
+    assert render_text(view).startswith("Error:")

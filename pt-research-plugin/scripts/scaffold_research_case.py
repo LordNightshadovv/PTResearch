@@ -38,8 +38,13 @@ def main() -> int:
     (case / "openfoam" / "generated_case").mkdir(parents=True)
     (case / "simulation_package" / "shared").mkdir(parents=True)
     now = datetime.now(timezone.utc).isoformat()
-    dump_artifact(case / "project_state.yaml", {"contract_version": 3, "simulation_contract_version": 1, "calibration_contract_version": 1, "case_id": args.case_id, "exact_prompt": prompt, "stage": "intake", "updated_at": now, "scientific_readiness": "model_selected_not_closed", "software_readiness": "not_applicable", "claim_ceiling": "research_intake_only", "claims": []})
+    dump_artifact(case / "project_state.yaml", {"contract_version": 3, "simulation_contract_version": 1, "calibration_contract_version": 1, "engineering_contract_version": 1, "case_id": args.case_id, "exact_prompt": prompt, "stage": "intake", "updated_at": now, "scientific_readiness": "model_selected_not_closed", "software_readiness": "not_applicable", "claim_ceiling": "research_intake_only", "claims": []})
     dump_artifact(case / "problem_contract.yaml", {"contract_version": 3, "case_id": args.case_id, "exact_prompt": prompt, "primary_observables": [], "controlled_inputs": [], "experimental_parameter_ranges": [], "constraints": [], "apparatus_branches": []})
+    dump_artifact(case / "engineering_standards.yaml", {
+        "engineering_contract_version": 1, "status": "not_started",
+        "validation_scope": "declaration_and_structure_only",
+        "claim_ceiling": "no_code_produced_no_engineering_claim",
+    })
     for filename, empty in {
         "preliminary_query_map.yaml": {"queries": []}, "search_log.yaml": {"searches": []},
         "source_registry.yaml": {"sources": []}, "selected_papers.yaml": {"paper_ids": []},

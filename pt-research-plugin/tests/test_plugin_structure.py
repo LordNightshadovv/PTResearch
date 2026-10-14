@@ -10,7 +10,15 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from validate_plugin import REQUIRED_SCHEMAS, is_valid_semver  # noqa: E402
+from validate_plugin import (  # noqa: E402
+    CLAUDE_MANIFEST_ALLOWED,
+    ENGINEERING_SKILL,
+    ENGINEERING_WIRED_SKILLS,
+    REQUIRED_SCHEMAS,
+    check_claude_manifest,
+    check_engineering_integration,
+    is_valid_semver,
+)
 
 
 class PluginStructureTests(unittest.TestCase):
@@ -45,6 +53,42 @@ class PluginStructureTests(unittest.TestCase):
             self.assertTrue(is_valid_semver(version), version)
         for version in ("0.7", "v0.7.0", "0.7.0.1", "0.7.0+", "0.7.0+codex/"):
             self.assertFalse(is_valid_semver(version), version)
+
+    def test_claude_manifest_matches_codex_manifest_and_has_only_supported_fields(self):
+        codex = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
+        claude = json.loads((ROOT / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))
+        self.assertEqual(claude["name"], "pt-research-plugin")
+        self.assertEqual(claude["version"], codex["version"])
+        self.assertTrue(codex["version"].startswith("0.8.2+codex."))
+        self.assertRegex(codex["version"], r"^0\.8\.2\+codex\.\d{14}$")
+        self.assertEqual(claude["author"], {"name": codex["author"]["name"]})
+        self.assertTrue(claude["keywords"])
+        self.assertEqual(claude["skills"], "./skills/")
+        self.assertLessEqual(set(claude), CLAUDE_MANIFEST_ALLOWED)
+        self.assertNotIn("interface", claude)
+        self.assertEqual(check_claude_manifest(ROOT, codex), [])
+
+    def test_claude_manifest_checker_rejects_drift(self):
+        codex = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
+        drifted = dict(codex, version="0.0.1")
+        self.assertTrue(any("version" in e for e in check_claude_manifest(ROOT, drifted)))
+
+    def test_engineering_skill_is_wired_everywhere_and_policy_is_in_agents(self):
+        self.assertEqual(check_engineering_integration(ROOT), [])
+        for name in ENGINEERING_WIRED_SKILLS:
+            text = (ROOT / "skills" / name / "SKILL.md").read_text(encoding="utf-8")
+            self.assertIn(ENGINEERING_SKILL, text)
+        agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        self.assertIn("PTENG-001", agents)
+        self.assertIn("BEGIN PT-SELF-IMPROVEMENT RULES", agents)
+        self.assertLess(agents.index("END PT-ENGINEERING-STANDARDS"), agents.index("BEGIN PT-SELF-IMPROVEMENT RULES"))
+        self.assertIn("engineering-standards.schema.json", REQUIRED_SCHEMAS)
+        skill = (ROOT / "skills" / ENGINEERING_SKILL / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("proves declaration and structure, never scientific correctness", skill)
+
+    def test_changelog_documents_current_base_version(self):
+        base = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))["version"].split("+")[0]
+        self.assertIn("## [" + base + "]", (ROOT / "CHANGELOG.md").read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":

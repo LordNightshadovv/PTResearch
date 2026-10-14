@@ -7,7 +7,7 @@ does not claim that a solver ran or that the workflow empirically improved. The 
 
 ## Evidence and scope
 
-The review used the workspace plugin at `~/Documents/PTResearch/pt-research-plugin`, its
+The review used the workspace plugin at `<workspace>/pt-research-plugin`, its
 first-party and bridge `SKILL.md` files, the v3 contract and state machine, the calibration
 contract added during this upgrade, and the self-improvement helper. The baseline software suite
 was run before these documentation changes:
@@ -111,7 +111,7 @@ these tests.
 local source `./plugins/pt-research-plugin`. `codex plugin list` resolved that entry to
 `~/plugins/pt-research-plugin`, installed/enabled at
 `0.5.0+codex.20260726031254`. The workspace source is
-`~/Documents/PTResearch/pt-research-plugin` at base version `0.7.0`; the two directories
+`<workspace>/pt-research-plugin` at base version `0.7.0`; the two directories
 are ordinary, non-symlinked directories with different manifests and skill hashes. No cache,
 marketplace, or installed source was edited during this audit. After review, the safe update path
 is a reviewed overlay to the registered local source, the Plugin Creator cachebuster helper, and

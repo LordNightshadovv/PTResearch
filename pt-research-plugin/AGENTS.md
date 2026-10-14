@@ -16,6 +16,7 @@ For every PT, IYPT, or CYPT research or simulation task in this plugin, read and
 - Begin every new simulation with exactly one named primary solver. A second independent solver is an escalation, never a default; preserve the insufficiency evidence, interface variables and coupling-validation plan in the route record.
 - Before substantial execution or package generation, obtain or reuse the target platform choice. A container is Linux execution on a host, never a native build by another name.
 - When using `pt-self-improvement`, explicitly load this file even if the plugin root was not auto-loaded. Keep its learning ledger under the authorized case, bound every lineage and iteration, and treat rules without an isolated held-out evaluation as provisional.
+- Private data lives outside the plugin directory, in `PT_RESEARCH_HOME` (default `~/.config/pt-research`), because a marketplace-installed plugin is replaced on every update: `local.paths.json` (machine paths) and `local-references/` (other teams' CYPT decks, never redistributed). Before using `cypt-slide-template`, run `python3 scripts/fetch_local_references.py --check`; if the decks are missing, follow the README section "Restoring private CYPT reference decks (not redistributed)" (ask the user before any network download, verify hashes, never commit the decks).
 - At stage close, consider a bounded process-learning opportunity from actual case evidence; record a no-op when none is supported. At handoff, consolidate only independently evidenced transferable rules into the canonical workspace and plugin policy files.
 
 Run structural and unit checks with:
@@ -24,6 +25,21 @@ Run structural and unit checks with:
 python3 scripts/validate_plugin.py .
 python3 -m unittest discover -s tests -v
 ```
+
+<!-- BEGIN PT-ENGINEERING-STANDARDS (managed; edit through the engineering skill's reviewed changes) -->
+
+## Mandatory research-software engineering standards (policy PTENG-001)
+
+Any stage that produces or changes code (simulation packages, solver adapters, prediction/analysis/fit scripts, sweeps, GUIs) must follow `skills/pt-research-software-engineering/SKILL.md`, invoked through the orchestrator. Summary:
+
+- Plan before coding: requirements and design notes, an assumptions registry, and a stack decision record (ADR) naming at least two alternatives. Choose technology on technical suitability (maintainability, modularity, performance, reliability, extensibility, reproducibility), prefer established libraries (NumPy, SciPy, SymPy, pandas/xarray, Pint, uncertainties, `solve_ivp`, lmfit/`scipy.optimize`, emcee where justified, Matplotlib/Plotly, pydantic/Hydra, pytest+hypothesis, ruff, mypy, uv/poetry lockfiles) over reinvention, and justify OOP versus functional/procedural style per module. Choose the language on technical merit; Rust is an option, not a default.
+- Professional hygiene: version control without committing generated data or secrets, typed interfaces, lint/format/type gates, automated tests, CI-ready configuration, semantic versioning and a changelog, pinned or locked dependencies, structured logging, explicit error handling, configuration separated from code.
+- Interface: a headless, tested core first. Add a desktop GUI, web UI, or TUI (Python Textual; Rust ratatui only with a documented performance/reliability case) only where it improves usability, accessibility, or research efficiency, as a thin layer with accessibility considered.
+- Scientific rigor: convergence/step-size/tolerance studies, conservation checks, dimensional analysis, limiting cases, symmetry checks, analytic benchmarks; seeds, pinned environments, run metadata, deterministic outputs; sweeps, sensitivity, uncertainty propagation, fit uncertainties, residual analysis, and quantitative theory-versus-experiment comparison with separate fit and held-out data.
+- Declare it: `engineering_standards.yaml` (schema `engineering-standards`), scaffolded by `scripts/scaffold_research_software.py` and checked by `scripts/validate_engineering_standards.py` and `scripts/validate_artifacts.py`.
+- Truthfulness: validation proves declaration and structure only. It runs no test and proves neither numerical accuracy nor scientific correctness. A check is "passed" only with a retained receipt; unavailable tools are reported as not run, and no readiness state is raised by the manifest alone.
+
+<!-- END PT-ENGINEERING-STANDARDS -->
 
 <!-- BEGIN PT-SELF-IMPROVEMENT RULES (managed; preserve surrounding content) -->
 

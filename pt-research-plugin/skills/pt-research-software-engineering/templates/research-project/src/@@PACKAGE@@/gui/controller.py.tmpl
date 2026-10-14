@@ -1,0 +1,62 @@
+"""Toolkit-independent presenter: parses form text, calls the core, returns plain data.
+
+Any GUI/TUI/web toolkit binds widgets to ``RunForm`` and renders ``RunView``. Because this
+module has no toolkit imports it is unit-tested headlessly.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, replace
+from pathlib import Path
+
+from ..config import RunConfig, load_config
+from ..errors import ResearchError
+from ..experiment import run_simulation
+
+
+@dataclass(frozen=True)
+class RunForm:
+    """Raw text fields exactly as a user typed them."""
+
+    config_path: str = "config/default.toml"
+    damping_kg_per_s: str = ""
+
+
+@dataclass(frozen=True)
+class RunView:
+    ok: bool
+    message: str
+    damping_ratio: float | None = None
+    final_energy_j: float | None = None
+
+
+def submit(form: RunForm) -> RunView:
+    """Validate the form, run the core, and report a view model (never raises for user errors)."""
+    try:
+        config: RunConfig = load_config(Path(form.config_path))
+        if form.damping_kg_per_s.strip():
+            try:
+                damping = float(form.damping_kg_per_s)
+            except ValueError as exc:
+                raise ResearchError("damping must be a number in kg/s") from exc
+            config = replace(config, model=replace(config.model, damping_kg_per_s=damping))
+        summary = run_simulation(config)
+    except (ResearchError, ValueError) as exc:
+        return RunView(ok=False, message=str(exc))
+    return RunView(
+        ok=True,
+        message="run complete",
+        damping_ratio=float(summary.results["damping_ratio"]),
+        final_energy_j=float(summary.results["final_energy_j"]),
+    )
+
+
+def render_text(view: RunView) -> str:
+    """Plain-text rendering: usable with screen readers and in any terminal."""
+    if not view.ok:
+        return f"Error: {view.message}"
+    return (
+        f"{view.message}\n"
+        f"damping ratio (dimensionless): {view.damping_ratio:.4g}\n"
+        f"final energy (J): {view.final_energy_j:.4g}"
+    )

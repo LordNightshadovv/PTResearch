@@ -1,0 +1,88 @@
+"""Headless entry points shared by the CLI, tests, and any GUI layer."""
+
+from __future__ import annotations
+
+import json
+import logging
+from dataclasses import asdict, dataclass
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+
+from .config import RunConfig
+from .model import DampedOscillator, FloatArray
+from .provenance import collect_run_metadata, write_run_metadata
+from .solver import simulate
+
+LOGGER = logging.getLogger(__name__)
+
+
+@dataclass(frozen=True)
+class RunSummary:
+    results: dict[str, Any]
+    t_s: FloatArray
+    position_m: FloatArray
+
+
+def run_simulation(config: RunConfig) -> RunSummary:
+    """Run the configured model and compute verification-relevant summaries."""
+    model = DampedOscillator(
+        config.model.mass_kg, config.model.stiffness_n_per_m, config.model.damping_kg_per_s
+    )
+    y0 = np.array(
+        [config.initial_state.position_m, config.initial_state.velocity_m_per_s], dtype=np.float64
+    )
+    t_eval = np.linspace(0.0, config.solver.t_end_s, config.solver.n_samples)
+    trajectory = simulate(
+        model,
+        y0,
+        config.solver.t_end_s,
+        t_eval,
+        method=config.solver.method,
+        rtol=config.solver.rtol,
+        atol=config.solver.atol,
+    )
+    energies = np.array([model.energy(trajectory.y[:, i]) for i in range(t_eval.size)])
+    results: dict[str, Any] = {
+        "damping_ratio": model.damping_ratio,
+        "omega0_rad_per_s": model.omega0_rad_per_s,
+        "initial_energy_j": float(energies[0]),
+        "final_energy_j": float(energies[-1]),
+        "max_relative_energy_increase": float(
+            max(0.0, np.max(np.diff(energies)) / energies[0]) if energies[0] > 0 else 0.0
+        ),
+        "n_function_evaluations": trajectory.n_function_evaluations,
+        "solver": {
+            "method": trajectory.method,
+            "rtol": trajectory.rtol,
+            "atol": trajectory.atol,
+        },
+    }
+    LOGGER.info("run complete: final energy %.6g J", results["final_energy_j"])
+    return RunSummary(results=results, t_s=trajectory.t_s, position_m=trajectory.y[0])
+
+
+def write_outputs(
+    summary: RunSummary, config: RunConfig, output_dir: Path, *, config_path: Path | None = None
+) -> None:
+    """Write deterministic results and, separately, run metadata."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    (output_dir / "results.json").write_text(
+        json.dumps(summary.results, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    np.savetxt(
+        output_dir / "trajectory.csv",
+        np.column_stack([summary.t_s, summary.position_m]),
+        delimiter=",",
+        header="t_s,position_m",
+        comments="",
+    )
+    inputs = {"config": config_path} if config_path is not None else {}
+    metadata = collect_run_metadata(
+        config=asdict(config),
+        seed=config.run.seed,
+        input_files=inputs,
+        lockfile=Path("uv.lock"),
+    )
+    write_run_metadata(output_dir / "run_metadata.json", metadata)

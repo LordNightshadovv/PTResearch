@@ -1,0 +1,22 @@
+# Configuration is data, not code. Units are in the key names (SI unless stated).
+
+[model]
+mass_kg = 0.25
+stiffness_n_per_m = 40.0
+damping_kg_per_s = 0.1
+
+[initial_state]
+position_m = 0.02
+velocity_m_per_s = 0.0
+
+[solver]
+method = "DOP853"
+rtol = 1.0e-9
+atol = 1.0e-12
+t_end_s = 2.0
+n_samples = 201
+
+[run]
+seed = 20240601
+output_dir = "outputs"
+log_level = "INFO"

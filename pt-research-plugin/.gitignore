@@ -1,0 +1,11 @@
+# Machine-specific settings (copy local.paths.example.json to local.paths.json).
+local.paths.json
+.env.local
+
+# Third-party team slide decks and images, kept on the owner's computer only.
+# The cypt-slide-template skill uses this folder when it exists and works without it.
+skills/cypt-slide-template/assets/local-references/
+
+.DS_Store
+__pycache__/
+*.pyc

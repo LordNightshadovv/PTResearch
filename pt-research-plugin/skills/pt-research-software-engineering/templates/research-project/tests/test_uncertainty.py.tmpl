@@ -1,0 +1,72 @@
+"""Uncertainty propagation, fitting, and comparison metrics on seeded synthetic data."""
+
+from __future__ import annotations
+
+import numpy as np
+import pytest
+
+from @@PACKAGE@@.comparison import compare
+from @@PACKAGE@@.uncertainty import (
+    fit_with_uncertainty,
+    linear_propagation,
+    local_sensitivity,
+    monte_carlo_propagation,
+    parameter_sweep,
+    residual_summary,
+)
+
+
+def period(values: np.ndarray) -> float:
+    mass, stiffness = float(values[0]), float(values[1])
+    return float(2.0 * np.pi * np.sqrt(mass / stiffness))
+
+
+def test_monte_carlo_agrees_with_linear_propagation_for_small_errors() -> None:
+    values, sigmas = [0.25, 40.0], [0.0025, 0.4]  # 1 % each
+    linear = linear_propagation(period, values, sigmas)
+    sampled = monte_carlo_propagation(period, values, sigmas, n_samples=20_000, seed=1)
+    assert sampled.std == pytest.approx(linear, rel=0.05)
+
+
+def test_monte_carlo_is_reproducible_for_a_fixed_seed() -> None:
+    first = monte_carlo_propagation(period, [0.25, 40.0], [0.0025, 0.4], n_samples=500, seed=7)
+    second = monte_carlo_propagation(period, [0.25, 40.0], [0.0025, 0.4], n_samples=500, seed=7)
+    assert first == second
+
+
+def decay(t: np.ndarray, amplitude: float, rate: float) -> np.ndarray:
+    return amplitude * np.exp(-rate * t)
+
+
+def test_fit_recovers_parameters_within_reported_uncertainty() -> None:
+    rng = np.random.default_rng(12345)
+    t = np.linspace(0.0, 2.0, 40)
+    sigma = np.full_like(t, 0.01)
+    truth = (1.0, 1.5)
+    y = decay(t, *truth) + rng.normal(0.0, sigma)
+    fit = fit_with_uncertainty(decay, t, y, sigma, p0=[0.8, 1.0])
+    assert np.all(np.abs(fit.parameters - truth) < 4.0 * fit.standard_errors)
+    assert 0.4 < fit.reduced_chi_squared < 1.8
+    summary = residual_summary(fit.residuals, sigma)
+    assert abs(summary["mean"]) < 0.6
+
+
+def test_comparison_metrics_flag_a_wrong_model() -> None:
+    rng = np.random.default_rng(3)
+    t = np.linspace(0.0, 2.0, 40)
+    sigma = np.full_like(t, 0.01)
+    y = decay(t, 1.0, 1.5) + rng.normal(0.0, sigma)
+    good = compare(y, sigma, decay(t, 1.0, 1.5))
+    bad = compare(y, sigma, decay(t, 1.0, 2.5))
+    assert good.reduced_chi_squared < 3.0 < bad.reduced_chi_squared
+    with pytest.raises(ValueError):
+        compare(y, np.zeros_like(y), y)
+
+
+def test_sweep_and_sensitivity() -> None:
+    sweep = parameter_sweep(lambda k: 2 * np.pi * np.sqrt(0.25 / k), [10.0, 20.0, 40.0])
+    assert [round(k) for k, _ in sweep] == [10, 20, 40]
+    # T ~ k^(-1/2): logarithmic sensitivity to k is -1/2.
+    assert local_sensitivity(lambda k: 2 * np.pi * np.sqrt(0.25 / k), 40.0) == pytest.approx(
+        -0.5, abs=1e-6
+    )

@@ -34,6 +34,15 @@ class ScaffoldResearchCaseTests(unittest.TestCase):
             self.assertIn("comparison_table", registry)
             requirements = json.loads((root / "runs" / "prompt-file-case" / "solver_requirements.yaml").read_text())
             self.assertIn("dimensionless_analysis", requirements)
+            self.assertEqual(state["engineering_contract_version"], 1)
+            engineering = json.loads((root / "runs" / "prompt-file-case" / "engineering_standards.yaml").read_text())
+            self.assertEqual(engineering["status"], "not_started")
+            self.assertEqual(engineering["validation_scope"], "declaration_and_structure_only")
+            validation = subprocess.run(
+                [sys.executable, str(ROOT / "scripts" / "validate_artifacts.py"), str(root / "runs" / "prompt-file-case"), "--allow-partial"],
+                capture_output=True, text=True,
+            )
+            self.assertEqual(validation.returncode, 0, validation.stdout + validation.stderr)
 
     def test_empty_prompt_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as temp:

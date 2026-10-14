@@ -1,0 +1,27 @@
+"""Conservation and dissipation checks: invariants the physics guarantees."""
+
+from __future__ import annotations
+
+import numpy as np
+
+from @@PACKAGE@@.model import DampedOscillator
+from @@PACKAGE@@.solver import simulate
+
+T_EVAL = np.linspace(0.0, 5.0, 501)
+
+
+def energies(model: DampedOscillator) -> np.ndarray:
+    trajectory = simulate(
+        model, np.array([0.02, 0.0]), 5.0, T_EVAL, method="DOP853", rtol=1e-10, atol=1e-13
+    )
+    return np.array([model.energy(trajectory.y[:, i]) for i in range(T_EVAL.size)])
+
+
+def test_energy_conserved_without_damping() -> None:
+    e = energies(DampedOscillator(0.25, 40.0, 0.0))
+    assert np.max(np.abs(e - e[0])) / e[0] < 1e-8
+
+
+def test_energy_never_increases_with_damping() -> None:
+    e = energies(DampedOscillator(0.25, 40.0, 0.2))
+    assert np.max(np.diff(e)) <= 1e-12 * e[0]

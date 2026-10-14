@@ -1,0 +1,19 @@
+"""GUI entry-point stub. No toolkit is chosen until the ADR (docs/adr) records the decision.
+
+Replace ``launch`` with the chosen toolkit's event loop (PySide6, Streamlit, Textual, ...).
+Keep it thin: bind widgets to ``controller.RunForm`` / ``controller.RunView`` and put no
+physics here. Provide keyboard operation, non-color-only status, and text alternatives for
+plots (see skills/pt-research-software-engineering/references/interface-selection-guide.md).
+"""
+
+from __future__ import annotations
+
+from .controller import RunForm, render_text, submit
+
+GUI_TOOLKIT: str | None = None
+
+
+def launch() -> int:
+    """Run once with default form values and print the accessible text view."""
+    print(render_text(submit(RunForm())))
+    return 0

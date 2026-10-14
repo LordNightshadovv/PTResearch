@@ -30,9 +30,14 @@ from pathlib import Path
 from typing import Any
 
 
-ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from local_paths import resolve as _resolve_setting  # noqa: E402
+
+PLUGIN = Path(__file__).resolve().parents[1]
+# Workspace holding deliverables/: PT_WORKSPACE_ROOT (environment or git-ignored local.paths.json),
+# otherwise the directory that contains the plugin.
+ROOT = Path(_resolve_setting("PT_WORKSPACE_ROOT") or PLUGIN.parent).expanduser().resolve()
 ARCHIVE = ROOT / "deliverables" / "iypt-2027-consolidated"
-PLUGIN = ROOT / "pt-research-plugin"
 GENERIC_GENERATOR = PLUGIN / "tools" / "simulation-package" / "generate_package.py"
 PACKAGE_REVISION = "iypt-2027-amendment-2026-08-07"
 IMPLEMENTED = {

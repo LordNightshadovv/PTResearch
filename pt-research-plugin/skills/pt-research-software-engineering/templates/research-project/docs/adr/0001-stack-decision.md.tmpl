@@ -1,0 +1,44 @@
+# ADR 0001: Technology stack and structure
+
+- Status: proposed (accept after review; supersede, do not edit, when the decision changes)
+- Date: @@DATE@@
+- Deciders: project owner
+
+## Context
+
+Research code for @@PROJECT_NAME@@ must be correct, reproducible, testable, and
+maintainable by a small team under time pressure. Needs: ODE integration, unit safety,
+uncertainty analysis, fitting, plotting, configuration, and a reproducible environment.
+
+## Decision
+
+| Concern | Choice | Why |
+|---------|--------|-----|
+| Language | Python >= 3.10 | Scientific ecosystem, fast iteration; compute is vectorized or delegated to compiled libraries |
+| Numerics | NumPy, SciPy (`solve_ivp`, `optimize`) | Mature, tested, documented integrators and optimizers |
+| Units | Pint (optional extra) plus dimension-exponent tests | Runtime unit safety without reinvention |
+| Uncertainty | `uncertainties`/Monte Carlo helpers, `curve_fit` covariance (`lmfit` optional) | Standard conventions made explicit |
+| Config | TOML + frozen dataclasses | Zero extra dependency; pydantic is the upgrade path if schemas grow |
+| Tests | pytest + hypothesis | Parametrization and property testing |
+| Quality | ruff (lint+format), mypy --strict | Fast, strict, CI-friendly |
+| Environment | uv with committed `uv.lock` | Pinned, reproducible installs |
+| Paradigm | Abstract `Model` (OOP) for interchangeable models; functions elsewhere | OOP only where substitution matters |
+| Interface | Headless core + CLI; GUI layer optional and thin | Testable science, usable tooling |
+
+## Alternatives considered
+
+| Alternative | Rejected because |
+|-------------|------------------|
+| Hand-written integrators for production runs | Re-implements tested SciPy code; kept only as a verification stand-in |
+| Jupyter-only notebook | Weak testing, versioning, and reproducibility |
+| Hydra / pydantic config | Heavier than needed now; revisit when sweeps or nested schemas grow |
+| Poetry | Acceptable; uv chosen for speed and lockfile simplicity |
+| Rust / C++ core | No measured performance need; revisit if profiling shows a bottleneck SciPy cannot meet |
+| Conda environments | Heavier; use only for non-pip-installable binary dependencies |
+
+## Consequences
+
+- Positive: standard tooling, small surface to learn, strong verification culture.
+- Negative: Python overhead for tight scalar loops; revisit with profiling evidence.
+- Revisit when: a second solver, a measured performance bottleneck, a GUI requirement, or
+  distributed sweeps appear.

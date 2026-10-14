@@ -1,0 +1,27 @@
+{
+  "name": "pt-research-plugin",
+  "version": "0.8.2+codex.20261014123500",
+  "description": "Auditable IYPT/CYPT research with equation lineage, physics-first routing, executable synthetic simulation packages, receipt-gated readiness, and validation-chain gates, plus mandatory industrial-grade research-software engineering and scientific-computing standards.",
+  "author": {
+    "name": "PT Research Team"
+  },
+  "homepage": "https://github.com/LordNightshadovv/PTResearch",
+  "repository": "https://github.com/LordNightshadovv/PTResearch",
+  "license": "MIT",
+  "keywords": [
+    "IYPT",
+    "CYPT",
+    "physics",
+    "research",
+    "simulation",
+    "OpenFOAM",
+    "HCIPy",
+    "Project Chrono",
+    "Elmer FEM",
+    "YADE",
+    "research software",
+    "verification",
+    "uncertainty"
+  ],
+  "skills": "./skills/"
+}

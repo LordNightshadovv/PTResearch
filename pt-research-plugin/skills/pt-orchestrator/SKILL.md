@@ -49,6 +49,16 @@ Control the workflow; do not perform every specialist task inline. Persist state
   and OpenFOAM classification. Prefer built-in physics, then transparent auxiliary relations, then
   lookup tables; use staged multi-solver workflows only when distinct closed models require them.
 - Do not simulate until equations, assumptions, parameters, observables, and validation targets are explicit.
+- Require `pt-research-software-engineering` for every stage that produces or changes code
+  (simulation packages, solver adapters, prediction/analysis/fit scripts, sweeps, GUIs). Before
+  such code is written, require requirements/design notes, a stack decision record (ADR) with at
+  least two alternatives, and an interface choice; at `package_implemented`, require a `declared`
+  `engineering_standards.yaml` (validate with `python scripts/validate_engineering_standards.py`).
+  Reject hand-rolled numerics or units where an established library fits and no
+  `reinvention_exceptions` reason is recorded, scientific code without a seed and run-metadata
+  writer, and a GUI that holds physics logic. The manifest proves declaration and structure only;
+  it is never evidence of numerical accuracy or scientific correctness, and tests count as passed
+  only with a retained receipt.
 - Keep scientific readiness and software readiness separate. Scientific readiness is exactly one of
   `scientific_stop`, `model_selected_not_closed`, or `model_closed`. Software readiness is exactly
   one of `not_applicable`, `handoff_only`, `implementation_ready`, `runnable_synthetic`,
@@ -77,7 +87,9 @@ initialized → prompt_contracted → literature_discovery → literature_screen
 → physically_validated → parameter_study_complete → handoff_complete
 ```
 
-Theory-only cases may stop after `candidate_models_selected`. Skip a stage only when [state-machine.md](references/state-machine.md) explicitly permits it and record why.
+Theory-only cases may stop after `candidate_models_selected`. A theory stage that generates
+predictions or calculations with code is also code-producing and follows the engineering
+standards at proportionate size. Skip a stage only when [state-machine.md](references/state-machine.md) explicitly permits it and record why.
 
 ### Theory chain
 
@@ -102,7 +114,9 @@ but never replace that reasoning.
    comparison, mechanistic closure, and parameter mapping pass. Require its solver-requirements
    table, decision block, and a complete staged/second-solver record when another solver is proposed.
 2. Ask the mandated four-way execution choice unless the project already answers it: run locally now if available, produce a Linux/Ubuntu package, produce both, or stop at research before implementation. Record OS, architecture, GPU and container permission for modes that package or run. Do not install, package, generate, or run without the user choice and artifact gate.
-3. Invoke `pt-simulation-packager` to prepare the chosen primary solver's native-first or honestly
+3. Invoke `pt-research-software-engineering` before and during package or script implementation
+   (engineering contract: ADR, interface choice, test plan, numerical verification, uncertainty
+   treatment, reproducibility metadata). Then invoke `pt-simulation-packager` to prepare the chosen primary solver's native-first or honestly
    containerized package. The package must contain executable implementation, separated inputs,
    a synthetic example, a real system check, a state-aware run gate, a case generator or solver
    native case, machine-readable result extraction, a three-level verification plan, and receipts.
@@ -147,7 +161,10 @@ requires measured inputs and uncertainty records.
 
 ## Close a stage
 
-1. Validate the expected artifacts and cross-file references.
+1. Validate the expected artifacts and cross-file references. For any code-producing stage also
+   validate `engineering_standards.yaml` (run `python scripts/validate_artifacts.py <run-dir>`) and
+   confirm that every verification or lint command cited has a retained receipt or is reported as
+   not run.
 2. Record pass/fail, evidence, dependency mode, and allowed next specialists.
 3. Update `project_state.yaml` only after validation passes.
 4. Append an immutable event to `timeline.ndjson`.

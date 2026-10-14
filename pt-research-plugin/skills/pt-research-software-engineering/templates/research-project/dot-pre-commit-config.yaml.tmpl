@@ -1,0 +1,19 @@
+# Optional local gate; the same commands run in CI (.github/workflows/ci.yml).
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-format
+        name: ruff format
+        entry: ruff format --check .
+        language: system
+        pass_filenames: false
+      - id: ruff-check
+        name: ruff check
+        entry: ruff check .
+        language: system
+        pass_filenames: false
+      - id: mypy
+        name: mypy
+        entry: mypy
+        language: system
+        pass_filenames: false

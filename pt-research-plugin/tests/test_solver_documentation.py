@@ -4,6 +4,7 @@ import importlib.util
 import json
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -11,7 +12,14 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "tools" / "solver-documentation" / "solver_documents.py"
-BUNDLED_PYTHON = Path("~/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3")
+sys.path.insert(0, str(ROOT / "scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import _isolated_home  # noqa: E402,F401  (never read the real ~/.config/pt-research)
+from local_paths import resolve_path  # noqa: E402
+
+# Optional interpreter with PDF libraries: set PT_BUNDLED_PYTHON or local.paths.json; tests skip when unavailable.
+_BUNDLED = resolve_path("PT_BUNDLED_PYTHON")
+BUNDLED_PYTHON = _BUNDLED if _BUNDLED is not None else Path("/nonexistent/pt-bundled-python-unavailable")
 SPEC = importlib.util.spec_from_file_location("solver_documents", SCRIPT)
 MODULE = importlib.util.module_from_spec(SPEC)
 assert SPEC.loader

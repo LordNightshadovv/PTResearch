@@ -1,6 +1,6 @@
 {
   "name": "pt-research-plugin",
-  "version": "0.8.2+codex.20261014123500",
+  "version": "0.8.3+codex.20261014125333",
   "description": "Auditable IYPT/CYPT research with equation lineage, physics-first routing, executable synthetic simulation packages, receipt-gated readiness, and validation-chain gates, plus mandatory industrial-grade research-software engineering and scientific-computing standards.",
   "author": {
     "name": "PT Research Team"

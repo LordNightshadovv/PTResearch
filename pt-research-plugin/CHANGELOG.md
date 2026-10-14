@@ -4,6 +4,25 @@ All notable changes to the PT Research plugin are recorded here. The plugin foll
 [Semantic Versioning](https://semver.org/); the `+codex.<UTC timestamp>` build suffix only
 refreshes the Codex plugin cache and carries no compatibility meaning.
 
+## [0.8.3] - 2026-10-14
+
+Fresh-clone fixes: the published repository now passes the validator and the test suite.
+
+### Fixed
+- `tools/foam-agent/runs/.gitkeep` and `tools/foam-agent/database/foamgpt/data/.gitkeep` are hash-locked in
+  `upstream-lock.yaml` but were excluded by the vendored (and also hash-locked) `tools/foam-agent/.gitignore`,
+  so they never reached GitHub and the Foam-Agent integrity check failed in a clone. They are now tracked
+  (force-added); the vendored `.gitignore` is unchanged.
+- Empty `scripts/` and `tests/` folders that the validator requires for the upstream skills (and
+  `skills/pt-self-improvement/tests`) cannot be stored by git; each now holds a `.gitkeep`.
+- `test_current_2027_synthetic_package_is_runnable_and_partial_mode_reports_state` depended on the
+  owner's private, untracked `deliverables/` workspace. It now skips with a reason when that case is
+  absent, and looks in `PT_WORKSPACE_ROOT` (via `scripts/local_paths.py`) before the folder containing
+  the plugin.
+
+### Changed
+- Plugin version 0.8.2 to 0.8.3.
+
 ## [0.8.2] - 2026-10-14
 
 Private data moves to a user-level directory that survives plugin updates, and the private CYPT

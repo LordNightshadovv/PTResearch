@@ -14,6 +14,7 @@ GENERATOR = ROOT / "tools" / "simulation-package" / "generate_package.py"
 OPENFOAM_EXPORTER = ROOT / "tools" / "openfoam-runner" / "export_linux_package.py"
 VALIDATE_ARTIFACTS = ROOT / "scripts" / "validate_artifacts.py"
 sys.path.insert(0, str(ROOT / "scripts"))
+from local_paths import resolve_path
 from runnable_contract import package_status, validate_package
 
 
@@ -27,6 +28,28 @@ ROUTES = (
     "python_optimization",
     "reduced_order_model",
 )
+
+
+PRIVATE_CASE_PARTS = ("deliverables", "iypt-2027-consolidated", "06-seeing-sound")
+
+
+def private_workspace_case() -> Path | None:
+    """Return the owner's private 2027 case folder, or None when that workspace data is absent.
+
+    The workspace (``PT_WORKSPACE_ROOT``, else the folder containing the plugin) holds the owner's
+    untracked research deliverables. They are never published, so a fresh clone does not have them.
+    """
+
+    candidates = []
+    configured = resolve_path("PT_WORKSPACE_ROOT")
+    if configured is not None:
+        candidates.append(configured)
+    candidates.append(ROOT.parent)
+    for workspace in candidates:
+        case = workspace.joinpath(*PRIVATE_CASE_PARTS)
+        if (case / "project_state.yaml").is_file():
+            return case
+    return None
 
 
 class RunnableSimulationContractTests(unittest.TestCase):
@@ -167,7 +190,12 @@ class RunnableSimulationContractTests(unittest.TestCase):
         self.assertTrue(any("execution receipt" in error or "passed machine-readable" in error for error in errors), errors)
 
     def test_current_2027_synthetic_package_is_runnable_and_partial_mode_reports_state(self) -> None:
-        case = ROOT.parent / "deliverables" / "iypt-2027-consolidated" / "06-seeing-sound"
+        case = private_workspace_case()
+        if case is None:
+            self.skipTest(
+                "private workspace case deliverables/iypt-2027-consolidated/06-seeing-sound is absent "
+                "(untracked owner data, not part of the published repository; set PT_WORKSPACE_ROOT to run)"
+            )
         strict = subprocess.run([sys.executable, str(VALIDATE_ARTIFACTS), str(case)], capture_output=True, text=True)
         self.assertEqual(strict.returncode, 0, strict.stdout + strict.stderr)
         self.assertIn("runnable-simulation contract", strict.stdout)

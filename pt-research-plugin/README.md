@@ -1,6 +1,6 @@
 # PT Research plugin
 
-Version 0.8.2. See `CHANGELOG.md`. The plugin ships a Codex manifest (`.codex-plugin/plugin.json`) and a
+Version 0.8.3. See `CHANGELOG.md`. The plugin ships a Codex manifest (`.codex-plugin/plugin.json`) and a
 Claude Code manifest (`.claude-plugin/plugin.json`); Claude Code discovers the skills in `skills/`
 automatically, and the validator keeps the two manifests' names and versions identical.
 

@@ -5,3 +5,15 @@ __pycache__/
 local.paths.json
 .env.local
 **/assets/local-references/
+
+# Workspace layer: local research cases, data and deliverables. The repository publishes only the
+# plugin and marketplace metadata; nothing below is committed. See WORKSPACE.md for the layout.
+/AGENTS.md
+/WORKSPACE.md
+/runs/
+/data/
+/deliverables/
+/archive/
+/scripts/
+/docs/
+/tmp/

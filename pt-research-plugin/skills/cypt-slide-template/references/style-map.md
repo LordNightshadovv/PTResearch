@@ -28,6 +28,8 @@ The deck language (4:3 canvas, cream background, header rule, numbered overview,
 | Characterization | three source apparatus photos, labels, plots and result boxes | 10 |
 | Overview | numbered sections and subtitles | 5 |
 | Section divider | a large quiet transition | 6, 13, 25, 58, 62 |
+| Pre-experiment placeholder | first slide of Preliminaries when no pre-experiment exists; title, header and footer only, empty body (SKILL.md "Required PT deck pages", rule 1) | none; PT house rule |
+| Symbol definitions | every variable, parameter and constant letter with meaning and SI unit, plus a key for subscripts not covered by those definitions; placed before the first theory slide (SKILL.md "Required PT deck pages", rule 2) | none; PT house rule |
 | Model diagram | physical abstraction with a one-line assumption | 7–9 |
 | Equations | formula, assumptions, symbol definitions | 8–9, 21–22 |
 | Apparatus/evidence | source photo with callouts, conditions and scale | 14–15, 26 |

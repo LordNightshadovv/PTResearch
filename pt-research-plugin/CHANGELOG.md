@@ -4,6 +4,23 @@ All notable changes to the PT Research plugin are recorded here. The plugin foll
 [Semantic Versioning](https://semver.org/); the `+codex.<UTC timestamp>` build suffix only
 refreshes the Codex plugin cache and carries no compatibility meaning.
 
+## [0.8.4] - 2026-10-21
+
+Two required pages for PT decks in the CYPT slide template.
+
+### Added
+- `cypt-slide-template` SKILL.md section "Required PT deck pages":
+  - Rule 1: when no pre-experiment exists, the Preliminaries section opens with an empty, title-only
+    pre-experiment placeholder page directly after its divider.
+  - Rule 2: before the first theory slide, a symbol-definitions page defines every variable, parameter
+    and constant letter used in the deck, with meaning and SI unit, typeset as math, plus a key for
+    subscripts whose meaning is not contained in the symbol definitions; an export check confirms
+    complete and non-redundant coverage.
+- `references/style-map.md`: the two pages added to the reusable page-type table.
+
+### Changed
+- Plugin version 0.8.3 to 0.8.4.
+
 ## [0.8.3] - 2026-10-14
 
 Fresh-clone fixes: the published repository now passes the validator and the test suite.

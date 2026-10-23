@@ -11,6 +11,7 @@ local.paths.json
 /AGENTS.md
 /WORKSPACE.md
 /runs/
+/handoffs/
 /data/
 /deliverables/
 /archive/

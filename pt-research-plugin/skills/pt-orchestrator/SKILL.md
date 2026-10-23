@@ -24,6 +24,25 @@ Control the workflow; do not perform every specialist task inline. Persist state
 6. Validate available artifacts with `python scripts/validate_artifacts.py <run-dir>` before choosing the next stage.
 7. Select only specialists allowed by the current state. Record the invocation, inputs, expected outputs, and dependency mode in `timeline.ndjson`.
 
+## Place artifacts where the workspace expects them
+
+- `<workspace-root>/runs/<case-id>/`: every gated artifact (contracts, registries, specifications,
+  receipts, reports, theory scripts, provenance, learning ledger) and `openfoam/` generated cases,
+  which `validate_artifacts.py` inspects in place. Name new cases `NN-slug` with the two-digit
+  problem number.
+- `<workspace-root>/data/<case-id>/<run-folder>/`: heavy solver output the validator does not
+  inspect (particle dumps, frames, videos, remote outputs, long logs). A specialist that writes
+  there leaves a receipt in `runs/<case-id>/receipts/` citing the folder by relative path; the
+  folder is not evidence on its own.
+- `<workspace-root>/deliverables/<case-id>/`: human-facing decks (`cypt-slide-template` output)
+  and PDFs. They present a case and never replace its ledgers.
+- `<workspace-root>/handoffs/<case-id>/`: `STATUS.md` (where the problem stands, rewritten each
+  session) and dated `YYYY-MM-DD-<topic>.md` handoffs that are never edited afterwards. A status
+  reports evidence by pointing at receipts, reports or ledgers; it creates none. The case's
+  `final_handoff.md` stays in `runs/<case-id>/`.
+- Nothing is written inside the plugin directory. When the workspace `AGENTS.md` refines these
+  locations, follow it.
+
 ## Enforce global scientific rules
 
 - Require a concise phenomenon essence (本质) and an input-to-observable causal chain.

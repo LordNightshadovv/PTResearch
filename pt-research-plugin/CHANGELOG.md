@@ -4,6 +4,24 @@ All notable changes to the PT Research plugin are recorded here. The plugin foll
 [Semantic Versioning](https://semver.org/); the `+codex.<UTC timestamp>` build suffix only
 refreshes the Codex plugin cache and carries no compatibility meaning.
 
+## [0.8.5] - 2026-10-23
+
+Workspace layout rules, so agents put each kind of output where its reader expects it.
+
+### Added
+- `AGENTS.md`: a workspace-layout rule. Gated artifacts and `openfoam/` generated cases stay in
+  `<workspace-root>/runs/<case-id>/` (named `NN-slug`); heavy solver output the validator does not
+  inspect goes to `<workspace-root>/data/<case-id>/<run-folder>/` and must be cited by a receipt;
+  human-facing decks and PDFs go to `<workspace-root>/deliverables/<case-id>/`; session status and
+  dated handoff notes go to `<workspace-root>/handoffs/<case-id>/`.
+- `pt-orchestrator` SKILL.md section "Place artifacts where the workspace expects them" with the
+  same four locations and the rule that the workspace `AGENTS.md` refines them.
+- `cypt-slide-template` SKILL.md: finished decks and build files go under
+  `<workspace-root>/deliverables/<case-id>/`, never inside the plugin or the case ledger.
+
+### Changed
+- Plugin version 0.8.4 to 0.8.5.
+
 ## [0.8.4] - 2026-10-21
 
 Two required pages for PT decks in the CYPT slide template.

@@ -10,6 +10,15 @@ For every PT, IYPT, or CYPT research or simulation task in this plugin, read and
   synthetic benchmark, state-aware checks, machine-readable outputs, verification plan, and
   receipts; keep handoff-only as an explicit claim ceiling.
 - Record every stage transition in `project_state.yaml` and append one event to `timeline.ndjson`.
+- Workspace layout: a case's ledgers, receipts, reports, theory scripts, provenance, learning ledger and
+  `openfoam/` generated cases live in `<workspace-root>/runs/<case-id>/`, named `NN-slug` with the
+  two-digit problem number. Heavy solver output that `validate_artifacts.py` does not inspect (particle
+  dumps, frames, videos, remote outputs, long logs) goes to `<workspace-root>/data/<case-id>/<run-folder>/`
+  and must be cited by a receipt in the case. Human-facing decks and PDFs go to
+  `<workspace-root>/deliverables/<case-id>/`; they present a case and never replace its ledgers. Session
+  status and dated handoff notes go to `<workspace-root>/handoffs/<case-id>/`, while the case's
+  `final_handoff.md` stays in the case. Write nothing inside the plugin directory. When the workspace
+  `AGENTS.md` refines these locations, it wins.
 - Keep all candidates in `model_registry.yaml`; every filtered candidate needs an evidence-backed reason and residual use.
 - If a user explicitly invokes an upstream specialist for inspection or debugging, state that its output has not been integrated or accepted by the PT orchestrator.
 - Never run simulation setup, upstream installation, or system package installation without the required artifact gate and user authority.
